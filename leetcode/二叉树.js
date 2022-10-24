@@ -333,3 +333,177 @@ var flatten = function (root) {
   }
   p.right = right;
 };
+
+// 654. 最大二叉树
+var constructMaximumBinaryTree = function (nums) {
+  // 将nums[low...high]构造成符合条件的树，返回根节点
+  function build(nums, low, high) {
+    if (low > high) {
+      return null;
+    }
+
+    // 找到数组中的最大值和对应的索引
+    var index = -1, max = -1;
+    for (var i = low; i <= high; i++) {
+      if (max < nums[i]) {
+        index = i;
+        max = nums[i];
+      }
+    }
+
+    // 先构造出根节点
+    var root = new TreeNode(max);
+    // 递归调用构造左右子树
+    root.left = build(nums, low, index - 1);
+    root.right = build(nums, index + 1, high);
+
+    return root;
+  }
+
+  return build(nums, 0, nums.length - 1);
+}
+
+// 105. 从前序和中序遍历序列构造二叉树
+var buildTree1 = function (preorder, inorder) {
+  var map = {};
+  for (var i = 0; i < inorder.length; i++) {
+    map[inorder[i]] = i;
+  }
+
+  function build(pre, preStart, preEnd, mid, midStart, midEnd) {
+    if (preStart > preEnd) {
+      return null;
+    }
+
+    // root节点对应的值就是前序遍历数组的第一个元素
+    var rootVal = pre[preStart];
+    // rootVal在中序遍历数组中的索引
+    var index = map[rootVal];
+
+    var leftSize = index - midStart;
+
+    // 先构造出当前根节点
+    var root = new TreeNode(rootVal);
+    // 递归构造左右子树
+    root.left = build(pre, preStart + 1, preStart + leftSize, mid, midStart, index - 1);
+    root.right = build(pre, preStart + leftSize + 1, preEnd, mid, index + 1, midEnd);
+
+    return root;
+  }
+
+  return build(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
+}
+
+// 106. 从中序和中序遍历序列构造二叉树
+var buildTree2 = function (inorder, postorder) {
+  var map = {};
+  for (var i = 0; i < inorder.length; i++) {
+    map[inorder[i]] = i;
+  }
+
+  function build(post, postStart, postEnd, mid, midStart, midEnd) {
+    if (postStart > postEnd) {
+      return null;
+    }
+
+    // root节点对应的值就是前序遍历数组的第一个元素
+    var rootVal = post[postEnd];
+    // rootVal在中序遍历数组中的索引
+    var index = map[rootVal];
+
+    var leftSize = index - midStart;
+
+    // 先构造出当前根节点
+    var root = new TreeNode(rootVal);
+    // 递归构造左右子树
+    root.left = build(post, postStart, postStart + leftSize - 1, mid, midStart, index - 1);
+    root.right = build(post, postStart + leftSize, postEnd - 1, mid, index + 1, midEnd);
+
+    return root;
+  }
+
+  return build(postorder, 0, postorder.length - 1, inorder, 0, inorder.length - 1);
+}
+
+// 889. 通过后序和前序遍历结果构造二叉树
+var buildTree3 = function (preorder, postorder) {
+  var map = {};
+  for (var i = 0; i < inorder.length; i++) {
+    map[inorder[i]] = i;
+  }
+
+  // 构建二叉树，并返回根节点
+  function build(pre, preStart, preEnd, post, postStart, postEnd) {
+    if (preStart > preEnd) {
+      return null;
+    }
+    if (preStart === preEnd) {
+      return new TreeNode(pre[preStart]);
+    }
+
+    // root节点对应的值就是前序遍历数组的第一个元素
+    var rootVal = pre[preStart];
+    // root.left 的值是前序遍历第二个元素
+    // 通过前序和后序遍历构造二叉树的关键在于通过左子树的根节点
+    // 确定preorder和postorder中左右子树的元素区间
+    var leftRootVal = pre[preStart + 1];
+    // leftRootVal在后序遍历数组中的索引
+    var index = map[leftRootVal];
+    // 左子树的元素个数
+    var leftSize = index - postStart + 1;
+
+    // 先构造出当前根节点
+    var root = new TreeNode(rootVal);
+    // 递归构造左右子树，根据左子树的根节点索引和元素个数推导左右子树的索引边界
+    root.left = build(pre, preStart + 1, preStart + leftSize, post, postStart, index);
+    root.right = build(pre, preStart + leftSize + 1, preEnd, post, index + 1, postEnd - 1);
+
+    return root;
+  }
+
+  return build(preorder, 0, preorder.length - 1, postorder, 0, postorder.length - 1);
+}
+
+// 297. 序列化与反序列化-前序遍历
+// 序列化
+var serialize = function (root) {
+  var str = "";
+
+  function _serialize(node) {
+    if (node === null) {
+      str += "#,";
+      return;
+    }
+    str += (node.val + ',');
+    _serialize(node.left);
+    _serialize(node.right);
+  }
+
+  _serialize(root);
+
+  return str;
+}
+// 反序列化
+var deserialize = function(data) {
+  var node = data.split(",");
+
+  function _deserialize(nodes) {
+    if (nodes.length === 0) {
+      return null;
+    }
+
+    var first = nodes.shift();
+    if (first === '#') {
+      return null;
+    }
+
+    var root = new TreeNode(+first);
+
+    root.left = _deserialize(nodes);
+    root.right = _deserialize(nodes);
+
+    return root;
+  }
+
+  return _deserialize(node);
+}
