@@ -149,7 +149,7 @@ var diameterOfbinaryTree = function (root) {
   return maxDiameter;
 };
 
-// 层序遍历-递归
+// 层序遍历-递归 ？？？这个有问题，这是前序遍历吧
 var levelOrder = function (root) {
   var res = [];
   function _levelOrder(node, level) {
@@ -465,45 +465,248 @@ var buildTree3 = function (preorder, postorder) {
 }
 
 // 297. 序列化与反序列化-前序遍历
-// 序列化
-var serialize = function (root) {
-  var str = "";
+function serializePreOrder() {
+  function TreeNode(val) {
+    this.val = val;
+    this.left = this.right = null;
+  }
+  // 序列化
+  var serialize = function (root) {
+    var str = "";
 
-  function _serialize(node) {
-    if (node === null) {
-      str += "#,";
-      return;
+    function _serialize(node) {
+      if (node === null) {
+        str += "#,";
+        return;
+      }
+      str += (node.val + ',');
+      _serialize(node.left);
+      _serialize(node.right);
     }
-    str += (node.val + ',');
-    _serialize(node.left);
-    _serialize(node.right);
+
+    _serialize(root);
+
+    return str;
+  }
+  // 反序列化
+  var deserialize = function (data) {
+    var node = data.split(",");
+
+    function _deserialize(nodes) {
+      if (nodes.length === 0) {
+        return null;
+      }
+
+      var first = nodes.shift();
+      if (first === '#') {
+        return null;
+      }
+
+      var root = new TreeNode(+first);
+
+      root.left = _deserialize(nodes);
+      root.right = _deserialize(nodes);
+
+      return root;
+    }
+
+    return _deserialize(node);
+  }
+  var root = {
+    val: "1",
+    left: {
+      val: "2",
+      left: {
+        val: "3",
+        left: null,
+        right: null,
+      },
+      right: {
+        val: "4",
+        left: null,
+        right: null,
+      },
+    },
+    right: {
+      val: "5",
+      left: {
+        val: "3",
+        left: null,
+        right: null,
+      },
+      right: {
+        val: "7",
+        left: null,
+        right: null,
+      },
+    },
+  };
+
+  console.log(serialize(root));
+  console.log(deserialize(serialize(root)));
+}
+
+// 序列化与反序列化-后序遍历
+function serializePostorder() {
+  function TreeNode(val) {
+    this.val = val;
+    this.left = this.right = null;
+  }
+  var serialize = function (root) {
+    var str = "";
+
+    function _serialize(node) {
+      if (node === null) {
+        str += "#,";
+        return;
+      }
+      _serialize(node.left);
+      _serialize(node.right);
+      str += (node.val + ',');
+    }
+
+    _serialize(root);
+
+    return str;
+  }
+  var deserialize = function (data) {
+    var node = data.split(",");
+    node.pop();
+
+    function _deserialize(nodes) {
+      if (nodes.length === 0) {
+        return null;
+      }
+
+      var first = nodes.pop();
+      if (first === '#') {
+        return null;
+      }
+
+      var root = new TreeNode(+first);
+
+      root.right = _deserialize(nodes);
+      root.left = _deserialize(nodes);
+
+      return root;
+    }
+
+    return _deserialize(node);
   }
 
-  _serialize(root);
+  var root = {
+    val: "1",
+    left: {
+      val: "2",
+      left: {
+        val: "3",
+        left: null,
+        right: null,
+      },
+      right: {
+        val: "4",
+        left: null,
+        right: null,
+      },
+    },
+    right: {
+      val: "5",
+      left: {
+        val: "3",
+        left: null,
+        right: null,
+      },
+      right: {
+        val: "7",
+        left: null,
+        right: null,
+      },
+    },
+  };
 
-  return str;
+  console.log(serialize(root));
+  console.log(deserialize(serialize(root)));
 }
-// 反序列化
-var deserialize = function(data) {
-  var node = data.split(",");
 
-  function _deserialize(nodes) {
-    if (nodes.length === 0) {
-      return null;
+// 中序遍历无法实现反序列化，因为无法确定根节点位置
+
+// 序列化与反序列化-层序遍历
+function serializeLevelOrder() {
+  function TreeNode(val) {
+    this.val = val;
+    this.left = this.right = null;
+  }
+  var serialize = function (root) {
+    if (root === null) {
+      return "#,";
+    }
+    var queue = [root];
+    var str = "";
+    while (queue.length) {
+      var length = queue.length;
+      for (var i = 0; i < length; i++) {
+        var node = queue.shift();
+        if (node === null) {
+          str += "#,";
+          continue;
+        }
+        str += (node.val + ',');
+        queue.push(node.left);
+        queue.push(node.right);
+      }
     }
 
-    var first = nodes.shift();
-    if (first === '#') {
+    return str;
+  };
+  var deserialize = function (data) {
+    if (!data) {
       return null;
     }
+    var nodes = data.split(",");
+    nodes.pop()
 
-    var root = new TreeNode(+first);
+    var root = new TreeNode(nodes[0]);
+    var queue = [];
+    queue.push(root);
 
-    root.left = _deserialize(nodes);
-    root.right = _deserialize(nodes);
+    for (var i = 1; i < nodes.length;) {
+      var parent = queue.shift();
+      var left = nodes[i++];
+      if (left !== "#") {
+        parent.left = new TreeNode(+left);
+        queue.push(parent.left);
+      } else {
+        parent.left = null;
+      }
+      var right = nodes[i++];
+      if (right !== "#") {
+        parent.right = new TreeNode(+right);
+        queue.push(parent.right);
+      } else {
+        parent.right = null;
+      }
+    }
 
     return root;
   }
+  var root = {
+    val: "1",
+    left: {
+      val: "2",
+      left: null,
+      right: {
+        val: "4",
+        left: null,
+        right: null,
+      },
+    },
+    right: {
+      val: "3",
+      left: null,
+      right: null,
+    },
+  };
 
-  return _deserialize(node);
+  console.log(serialize(root));
+  console.log(deserialize(serialize(root)));
 }
