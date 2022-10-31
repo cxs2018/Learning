@@ -343,7 +343,8 @@ var constructMaximumBinaryTree = function (nums) {
     }
 
     // 找到数组中的最大值和对应的索引
-    var index = -1, max = -1;
+    var index = -1,
+      max = -1;
     for (var i = low; i <= high; i++) {
       if (max < nums[i]) {
         index = i;
@@ -361,7 +362,7 @@ var constructMaximumBinaryTree = function (nums) {
   }
 
   return build(nums, 0, nums.length - 1);
-}
+};
 
 // 105. 从前序和中序遍历序列构造二叉树
 var buildTree1 = function (preorder, inorder) {
@@ -385,14 +386,35 @@ var buildTree1 = function (preorder, inorder) {
     // 先构造出当前根节点
     var root = new TreeNode(rootVal);
     // 递归构造左右子树
-    root.left = build(pre, preStart + 1, preStart + leftSize, mid, midStart, index - 1);
-    root.right = build(pre, preStart + leftSize + 1, preEnd, mid, index + 1, midEnd);
+    root.left = build(
+      pre,
+      preStart + 1,
+      preStart + leftSize,
+      mid,
+      midStart,
+      index - 1
+    );
+    root.right = build(
+      pre,
+      preStart + leftSize + 1,
+      preEnd,
+      mid,
+      index + 1,
+      midEnd
+    );
 
     return root;
   }
 
-  return build(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
-}
+  return build(
+    preorder,
+    0,
+    preorder.length - 1,
+    inorder,
+    0,
+    inorder.length - 1
+  );
+};
 
 // 106. 从中序和中序遍历序列构造二叉树
 var buildTree2 = function (inorder, postorder) {
@@ -416,14 +438,35 @@ var buildTree2 = function (inorder, postorder) {
     // 先构造出当前根节点
     var root = new TreeNode(rootVal);
     // 递归构造左右子树
-    root.left = build(post, postStart, postStart + leftSize - 1, mid, midStart, index - 1);
-    root.right = build(post, postStart + leftSize, postEnd - 1, mid, index + 1, midEnd);
+    root.left = build(
+      post,
+      postStart,
+      postStart + leftSize - 1,
+      mid,
+      midStart,
+      index - 1
+    );
+    root.right = build(
+      post,
+      postStart + leftSize,
+      postEnd - 1,
+      mid,
+      index + 1,
+      midEnd
+    );
 
     return root;
   }
 
-  return build(postorder, 0, postorder.length - 1, inorder, 0, inorder.length - 1);
-}
+  return build(
+    postorder,
+    0,
+    postorder.length - 1,
+    inorder,
+    0,
+    inorder.length - 1
+  );
+};
 
 // 889. 通过后序和前序遍历结果构造二叉树
 var buildTree3 = function (preorder, postorder) {
@@ -455,14 +498,35 @@ var buildTree3 = function (preorder, postorder) {
     // 先构造出当前根节点
     var root = new TreeNode(rootVal);
     // 递归构造左右子树，根据左子树的根节点索引和元素个数推导左右子树的索引边界
-    root.left = build(pre, preStart + 1, preStart + leftSize, post, postStart, index);
-    root.right = build(pre, preStart + leftSize + 1, preEnd, post, index + 1, postEnd - 1);
+    root.left = build(
+      pre,
+      preStart + 1,
+      preStart + leftSize,
+      post,
+      postStart,
+      index
+    );
+    root.right = build(
+      pre,
+      preStart + leftSize + 1,
+      preEnd,
+      post,
+      index + 1,
+      postEnd - 1
+    );
 
     return root;
   }
 
-  return build(preorder, 0, preorder.length - 1, postorder, 0, postorder.length - 1);
-}
+  return build(
+    preorder,
+    0,
+    preorder.length - 1,
+    postorder,
+    0,
+    postorder.length - 1
+  );
+};
 
 // 297. 序列化与反序列化-前序遍历
 function serializePreOrder() {
@@ -479,7 +543,7 @@ function serializePreOrder() {
         str += "#,";
         return;
       }
-      str += (node.val + ',');
+      str += node.val + ",";
       _serialize(node.left);
       _serialize(node.right);
     }
@@ -487,7 +551,7 @@ function serializePreOrder() {
     _serialize(root);
 
     return str;
-  }
+  };
   // 反序列化
   var deserialize = function (data) {
     var node = data.split(",");
@@ -498,7 +562,7 @@ function serializePreOrder() {
       }
 
       var first = nodes.shift();
-      if (first === '#') {
+      if (first === "#") {
         return null;
       }
 
@@ -511,7 +575,7 @@ function serializePreOrder() {
     }
 
     return _deserialize(node);
-  }
+  };
   var root = {
     val: "1",
     left: {
@@ -562,13 +626,13 @@ function serializePostorder() {
       }
       _serialize(node.left);
       _serialize(node.right);
-      str += (node.val + ',');
+      str += node.val + ",";
     }
 
     _serialize(root);
 
     return str;
-  }
+  };
   var deserialize = function (data) {
     var node = data.split(",");
     node.pop();
@@ -579,7 +643,7 @@ function serializePostorder() {
       }
 
       var first = nodes.pop();
-      if (first === '#') {
+      if (first === "#") {
         return null;
       }
 
@@ -592,7 +656,7 @@ function serializePostorder() {
     }
 
     return _deserialize(node);
-  }
+  };
 
   var root = {
     val: "1",
@@ -650,7 +714,7 @@ function serializeLevelOrder() {
           str += "#,";
           continue;
         }
-        str += (node.val + ',');
+        str += node.val + ",";
         queue.push(node.left);
         queue.push(node.right);
       }
@@ -663,13 +727,13 @@ function serializeLevelOrder() {
       return null;
     }
     var nodes = data.split(",");
-    nodes.pop()
+    nodes.pop();
 
     var root = new TreeNode(nodes[0]);
     var queue = [];
     queue.push(root);
 
-    for (var i = 1; i < nodes.length;) {
+    for (var i = 1; i < nodes.length; ) {
       var parent = queue.shift();
       var left = nodes[i++];
       if (left !== "#") {
@@ -688,7 +752,7 @@ function serializeLevelOrder() {
     }
 
     return root;
-  }
+  };
   var root = {
     val: "1",
     left: {
@@ -710,3 +774,43 @@ function serializeLevelOrder() {
   console.log(serialize(root));
   console.log(deserialize(serialize(root)));
 }
+
+// 230. 二叉搜索树中第k小的元素
+var kthSmallest = function (root, k) {
+  var res = 0;
+  var rank = 0;
+  function traverse(node) {
+    if (node === null) {
+      return;
+    }
+    traverse(node.left);
+
+    rank++;
+
+    if (k === rank) {
+      res = node.val;
+      return;
+    }
+
+    traverse(node.right);
+  }
+  traverse(root);
+  return res;
+};
+
+// 538. 把二叉搜索树转换为累加树
+// 1038. 从二叉搜索树到更大和树
+var convertBST = function (root) {
+  var sum = 0;
+  function traverse(node) {
+    if (node === null) {
+      return;
+    }
+    traverse(node.right);
+    sum += node.val;
+    node.val = sum;
+    traverse(node.left);
+  }
+  traverse(root);
+  return root;
+};
