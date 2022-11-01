@@ -820,12 +820,12 @@ var findDuplicateSubtrees = function (root) {
   var res = [];
   function traverse(node) {
     if (node === null) {
-      return '#';
+      return "#";
     }
     var left = traverse(node.left);
     var right = traverse(node.right);
 
-    var subTree = left + ',' + right + ',' + node.val;
+    var subTree = left + "," + right + "," + node.val;
 
     var count = map.get(subTree) || 0;
 
@@ -840,4 +840,87 @@ var findDuplicateSubtrees = function (root) {
   traverse(root);
 
   return res;
-}
+};
+
+// 98. 验证二叉搜索树
+var isValidBST = function (root) {
+  // 限定以root为根的子树节点必须满足 max.val > node.val > min.val
+  function traverse(node, min, max) {
+    if (node === null) {
+      return true;
+    }
+    // 若node.val不符合max和min的限制，说明不是合法BST
+    if (min !== null && min.val >= node.val) {
+      return false;
+    }
+    if (max !== null && max.val <= node.val) {
+      return false;
+    }
+    // 限定左子树的最大值是node.val，右子树的最小值是node.val
+    return traverse(node.left, min, node) && traverse(node.right, node, max);
+  }
+  return traverse(root, null, null);
+};
+
+// 700. 二叉搜索树中的搜索
+var searchBST = function (root, target) {
+  if (root === null) {
+    return null;
+  }
+  if (root.val === target) {
+    return root;
+  }
+  if (root.val > target) {
+    return searchBST(root.left, target);
+  } else {
+    return searchBST(root.right, target);
+  }
+};
+
+// 450. 删除BST的一个节点
+var getMin = function (node) {
+  // BST 最左边的就是最小的
+  while (node.left != null) {
+    node = node.left;
+  }
+  return node;
+};
+var deleteNode = function (root, key) {
+  if (root === null) {
+    return null;
+  }
+  if (root.val === key) {
+    // 这两个if把情况1和2都正确处理了
+    if (root.left == null) return root.right;
+    if (root.right === null) return root.left;
+    // 处理情况3
+    // 获得右子树最小的节点
+    var minNode = getMin(root.right);
+    // 删除右子树最小的节点
+    root.right = deleteNode(root.right, minNode.val);
+    // 用右子树最小的节点替换root节点
+    minNode.left = root.left;
+    minNode.right = root.right;
+    root = minNode;
+  } else if (root.val > key) {
+    root.left = deleteNode(root.left, key);
+  } else {
+    root.right = deleteNode(root.right, key);
+  }
+  return root;
+};
+
+// 1001. 在BST中插入一个树
+var insertIntoBST = function (root, val) {
+  // 找到空位置插入新节点
+  if (root === null) {
+    return new TreeNode(val);
+  }
+  if (root.val < val) {
+    root.right = insertIntoBST(root.right, val);
+  }
+  if (root.val > val) {
+    root.left = insertIntoBST(root.left, val);
+  }
+  return root;
+};
