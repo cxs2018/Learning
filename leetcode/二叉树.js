@@ -814,3 +814,30 @@ var convertBST = function (root) {
   traverse(root);
   return root;
 };
+// 652. 寻找重复的子树
+var findDuplicateSubtrees = function (root) {
+  var map = new Map();
+  var res = [];
+  function traverse(node) {
+    if (node === null) {
+      return '#';
+    }
+    var left = traverse(node.left);
+    var right = traverse(node.right);
+
+    var subTree = left + ',' + right + ',' + node.val;
+
+    var count = map.get(subTree) || 0;
+
+    if (count === 1) {
+      res.push(node);
+    }
+
+    map.set(subTree, count + 1);
+    return subTree;
+  }
+
+  traverse(root);
+
+  return res;
+}
