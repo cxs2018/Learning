@@ -924,3 +924,74 @@ var insertIntoBST = function (root, val) {
   }
   return root;
 };
+
+// 96. 不同的二叉搜索树
+var numTrees = function (n) {
+  // 备忘录的初始值为0
+  var memo = new Array(n+1).fill(0).map(() => new Array(n+1).fill(0));
+  // 计算闭区间[low,high]组成的BST个数
+  function count(low, high) {
+    // base case
+    if (low > high) {
+      return 1;
+    }
+    // 查备忘录
+    if (memo[low][high] !== 0) {
+      return memo[low][high];
+    }
+    var res = 0;
+    for (var i = low; i <= high; i++) {
+      // i的值作为根节root
+      var left = count(low, i - 1);
+      var right = count(i + 1, high);
+      // 左右子树的组合树乘积是BST的总数
+      res += left * right;
+    }
+    // 将结果存入备忘录
+    memo[low][high] = res;
+
+    return res;
+  }
+  return count(1, n);
+};
+
+// 95. 不同的二叉搜索树2
+// 构造合法 BST 的步骤：
+// 1、穷举root节点的所有可能。
+// 2、递归构造出左右子树的所有合法 BST。
+// 3、给root节点穷举所有左右子树的组合。
+var generateTrees = function(n) {
+  if (n === 0) {
+    return [];
+  }
+  // 构造闭区间[low,high]组成的BST
+  function build(low, high) {
+    var res = [];
+    // base case
+    if (low > high) {
+      res.push(null);
+      return res;
+    }
+    // 穷举root节点的所有可能
+    for (var i = low; i <= high; i++) {
+      // 递归构造出左右子树的所有合法BST
+      var leftTree = build(low, i - 1);
+      var rightTree = build(i+1, high);
+      // 给root节点穷举所有左右子树的组合
+      for (var left of leftTree) {
+        for (var right of rightTree) {
+          // i作为根节点root的值
+          var root = new TreeNode(i);
+          root.left = left;
+          root.right = right;
+          res.push(root);
+        }
+      }
+    }
+
+    return res;
+  }
+
+  // 构造闭区间[1,n]组成的BST
+  return build(1, n);
+}
