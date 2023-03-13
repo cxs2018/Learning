@@ -6,17 +6,17 @@ let optimizeCss = require("optimize-css-assets-webpack-plugin"); // TODO not wor
 let UglifyJsPlugin = require("uglifyjs-webpack-plugin"); // TODO not work
 
 module.exports = {
-  optimization: {
-    // 优化项
-    minimizer: [
-      new optimizeCss(),
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true,
-      }),
-    ],
-  },
+  // optimization: {
+  //   // 优化项
+  //   minimizer: [
+  //     new optimizeCss(),
+  //     new UglifyJsPlugin({
+  //       cache: true,
+  //       parallel: true,
+  //       sourceMap: true,
+  //     }),
+  //   ],
+  // },
   devServer: {
     // 开发服务器的配置
     port: 3000,
@@ -46,6 +46,26 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        use: { loader: "eslint-loader", options: { enforce: "pre" } },
+      },
+      {
+        test: /\.js$/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+            plugins: [
+              ["@babel/plugin-proposal-decorators", { legacy: true }],
+              ["@babel/plugin-proposal-class-properties", { loose: true }],
+              "@babel/plugin-transform-runtime",
+            ],
+          },
+        },
+        include: path.resolve(__dirname, "src"),
+        exclude: /node_modules/,
+      },
       {
         test: /\.css$/,
         use: [
