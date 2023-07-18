@@ -122,13 +122,13 @@ fun main() {
     val student5 = Student5("cuixuesen", 25)
 
     // 面向接口编程，也叫多态
-    fun doStudy(study: Study) {
-        student5.readBooks()
-        student5.doHomework()
-        student5.doHomework2()
+    fun doStudy(study: Study?) {
+        study?.readBooks()
+        study?.doHomework()
+        study?.doHomework2()
     }
 
-    doStudy(student5)
+    doStudy(null)
 
     val cellphone1 = Cellphone("cuixuesen", 12.2)
     val cellphone2 = Cellphone("cuixuesen", 12.2)
@@ -136,4 +136,48 @@ fun main() {
     println("cellphone1 equals cellphone2 " + (cellphone1 == cellphone2))
 
     Singleton.singletonTest()
+
+    val list = ArrayList<String>()
+    list.add("123")
+
+    val list2 = listOf("1", "2", 36, 4L)
+
+    val list3 = mutableListOf("1")
+    list3.add("2")
+
+    for(i in list3) {
+        println(i)
+    }
+
+    val set = setOf("1", "1", "2")
+
+    val set2 = mutableSetOf("1", "2")
+    set2.add("2")
+
+    val map = HashMap<String, Int>()
+    map.put("Apple", 1)
+    map["a"] = 2
+
+    val map2 = mapOf("apple" to 1, "banana" to 3)
+
+    for ((fruit, number) in map) {
+        println("fruit is " + fruit + ", number is " + number)
+    }
+
+    val list4 = listOf("Apple", "Banana", "Orange", "Pear", "Grape", "Watermelon")
+    val newList = list4.filter { it.length <= 5 }.map { it.toUpperCase() }
+    val maxLengthFruit = list4.maxBy { it.length }
+    val maxLengthFruit2  = list4.maxBy { it.length }
+    println("max length fruit is " + maxLengthFruit)
+
+    val anyResult = list4.any { it.length <= 5 }
+    val allResult = list4.all { it.length <= 5 }
+    println("anyResult is " + anyResult + ", allResult is " + allResult)
+    for(i in newList) {
+        println(i)
+    }
+
+    list4.let { obj2 ->
+        println("anyResult is " + anyResult + ", allResult is " + obj2)
+     }
 }
