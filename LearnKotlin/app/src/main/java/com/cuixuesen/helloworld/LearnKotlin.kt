@@ -180,4 +180,39 @@ fun main() {
     list4.let { obj2 ->
         println("anyResult is " + anyResult + ", allResult is " + obj2)
      }
+
+    val list5 = listOf("Apple", "Banana", "Orange", "Pear", "Grape")
+    val builder = StringBuilder()
+    builder.append("Start eating fruits.\n")
+    for (fruit in list5) {
+        builder.append(fruit).append("\n")
+    }
+    builder.append("Ate all fruits.")
+    println(builder.toString())
+
+    val result = with(builder) {
+        for (fruit in list5) {
+            append(fruit).append("\n")
+        }
+        append("Ate all fruits.")
+        toString()
+    }
+    println(result)
+
+    val resultRun = builder.run {
+        for (fruit in list5) {
+            append(fruit).append("\n")
+        }
+        append("Ate all fruits.")
+        toString()
+    }
+    println(resultRun)
+
+    val resultApply = builder.apply {
+        for (fruit in list5) {
+            append(fruit).append("\n")
+        }
+        append("Ate all fruits.")
+    }
+    println(resultApply.toString())
 }

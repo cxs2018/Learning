@@ -8,4 +8,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Button 1" />
+
+    <Button
+        android:id="@+id/startLifeCycleActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="startLifeCycleActivity" />
+
+    <Button
+        android:id="@+id/launchModeSelf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="launchMode" />
+
+    <Button
+        android:id="@+id/uicomponent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="uicomponent" />
 </LinearLayout>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  let observer = new MutationObserver((mutationRecord) => {
+    console.log("mutationRecords", mutationRecord);
+  })
+
+  observer.observe(document.body, { attributes: true, characterDataOldValue: true })
+
+  setTimeout(() => {
+    document.body.setAttribute("foo", "bar")
+    document.body.className = 'foo';
+    document.body.className = 'bar';
+    document.body.className = 'baz';
+  }, 2000)
+</script>
+
+</html>
