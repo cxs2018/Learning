@@ -56,6 +56,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val learnLayout: Button = findViewById(R.id.learnLayout)
+        learnLayout.setOnClickListener {
+//            val intent = Intent(this, LayoutActivity::class.java)
+//            val intent = Intent(this, ListViewActivity::class.java)
+            val intent = Intent(this, RecyclerViewActivity::class.java)
+            startActivity(intent)
+        }
+
+        supportActionBar?.hide()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

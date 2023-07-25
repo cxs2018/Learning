@@ -3,6 +3,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <com.cuixuesen.helloworld.TitleLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/button1"
         android:layout_width="match_parent"
@@ -26,4 +30,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="uicomponent" />
+
+    <Button
+        android:id="@+id/learnLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="学习布局" />
 </LinearLayout>
