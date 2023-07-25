@@ -1,10 +1,6 @@
 package com.cuixuesen.helloworld
 
 import android.content.Intent
-import android.hardware.Sensor
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
+import com.cuixuesen.helloworld.ui.UIBestPracticeActivity
 
 class MainActivity : AppCompatActivity() {
     val TAG = MainActivity::class.simpleName
@@ -60,7 +57,8 @@ class MainActivity : AppCompatActivity() {
         learnLayout.setOnClickListener {
 //            val intent = Intent(this, LayoutActivity::class.java)
 //            val intent = Intent(this, ListViewActivity::class.java)
-            val intent = Intent(this, RecyclerViewActivity::class.java)
+//            val intent = Intent(this, RecyclerViewActivity::class.java)
+            val intent = Intent(this, UIBestPracticeActivity::class.java)
             startActivity(intent)
         }
 

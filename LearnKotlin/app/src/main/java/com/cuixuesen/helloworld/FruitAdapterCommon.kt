@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class FruitAdapterCommon(val fruitList: List<Fruit>) : RecyclerView.Adapter<FruitAdapterCommon.ViewHolder>(){
@@ -15,7 +16,18 @@ class FruitAdapterCommon(val fruitList: List<Fruit>) : RecyclerView.Adapter<Frui
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FruitAdapterCommon.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.fruit_item, parent, false)
-        return ViewHolder(view)
+        val viewHolder = ViewHolder(view)
+        viewHolder.itemView.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            val fruit = fruitList[position]
+            Toast.makeText(parent.context, "you clicked view ${fruit.name}", Toast.LENGTH_SHORT).show()
+        }
+        viewHolder.fruitImage.setOnClickListener {
+            val position = viewHolder.adapterPosition
+            val fruit = fruitList[position]
+            Toast.makeText(parent.context, "you clicked image ${fruit.name}", Toast.LENGTH_SHORT).show()
+        }
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: FruitAdapterCommon.ViewHolder, position: Int) {
