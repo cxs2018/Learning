@@ -1,0 +1,1 @@
+Fragment是一种可以嵌入在Activity中的UI片段，有布局，有生命周期

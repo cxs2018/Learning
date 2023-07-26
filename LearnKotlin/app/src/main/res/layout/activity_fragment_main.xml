@@ -1,0 +1,34 @@
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:orientation="horizontal"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent">-->
+<!--&lt;!&ndash;    <fragment&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/leftFrag"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:name="com.cuixuesen.helloworld.fragment.LeftFragment"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="0dp"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_weight="1" />&ndash;&gt;-->
+<!--&lt;!&ndash;    <FrameLayout&ndash;&gt;-->
+<!--&lt;!&ndash;        android:id="@+id/rightLayout"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_width="0dp"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_height="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:layout_weight="1"></FrameLayout>&ndash;&gt;-->
+<!--    <fragment-->
+<!--        android:id="@+id/leftFrag"-->
+<!--        android:name="com.cuixuesen.helloworld.fragment.LeftFragment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent" />-->
+<!--</LinearLayout>-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/newsTitleLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <fragment
+        android:id="@+id/newsTitleFrag"
+        android:name="com.cuixuesen.helloworld.fragment.NewsTitleFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+</FrameLayout>
