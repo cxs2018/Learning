@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      window.addEventListener("load", (event) => {
+        let div = document.getElementById("myDiv");
+        div.addEventListener("contextmenu", (event) => {
+          event.preventDefault();
+          let menu = document.getElementById("myMenu");
+          menu.style.left = event.clientX + "px";
+          menu.style.top = event.clientY + "px";
+          menu.style.visibility = "visible";
+        });
+        document.addEventListener("click", (event) => {
+          document.getElementById("myMenu").style.visibility = "hidden";
+        });
+      });
+      window.addEventListener("beforeunload", (event) => {
+        let message = "I'm really going to miss you if you go.";
+        event.returnValue = message;
+        return message;
+      });
+      document.addEventListener("readystatechange", (event) => {
+        if (
+          document.readyState == "interactive" ||
+          document.readyState == "complete"
+        ) {
+          document.removeEventListener("readystatechange", arguments.callee);
+          console.log("Content loaded");
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <!-- <div id="myDiv" style="height: 1000px;width: 100%;"></div>
+    <script>
+      let div = document.getElementById("myDiv");
+      div.addEventListener("click", (event) => {
+        let keys = new Array();
+        if (event.shiftKey) {
+          keys.push("shift");
+        }
+        if (event.ctrlKey) {
+          keys.push("ctrl");
+        }
+        if (event.altKey) {
+          keys.push("alt");
+        }
+        if (event.metaKey) {
+          keys.push("meta");
+        }
+        console.log("Keys: " + keys.join(","));
+      });
+    </script> -->
+    <div id="myDiv">
+      Right click or Ctrl+click me to get a custom context menu. Click anywhere
+      else to get the default context menu.
+    </div>
+    <ul
+      id="myMenu"
+      style="position: absolute; visibility: hidden; background-color: silver"
+    >
+      <li><a href="http://www.somewhere.com"> somewhere</a></li>
+      <li><a href="http://www.wrox.com">Wrox site</a></li>
+      <li><a href="http://www.somewhere-else.com">somewhere-else</a></li>
+    </ul>
+  </body>
+</html>
