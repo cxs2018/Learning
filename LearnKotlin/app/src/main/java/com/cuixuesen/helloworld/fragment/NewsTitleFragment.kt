@@ -39,7 +39,8 @@ class NewsTitleFragment: Fragment() {
     private fun getNews(): List<News> {
         val newsList = ArrayList<News>()
         for (i in 1..50) {
-            val news = News("This is news title $i", getRandomLengthString("This is new Content $i."))
+//            val news = News("This is news title $i", getRandomLengthString("This is new Content $i."))
+            val news = News("This is news title $i", "This is new Content $i." * (1..20).random())
             newsList.add(news)
         }
         return newsList

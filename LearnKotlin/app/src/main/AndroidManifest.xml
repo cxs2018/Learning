@@ -13,6 +13,7 @@
         android:theme="@style/Theme.LearnKotlin"
         tools:targetApi="31">
         <activity
+<<<<<<< Updated upstream
             android:name=".tools.GuideMIUISettingsActivity"
             android:exported="true">
 <!--            <intent-filter>-->
@@ -20,6 +21,13 @@
 
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
+=======
+            android:name=".BroadcastMainActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+>>>>>>> Stashed changes
         </activity>
         <activity
             android:name=".fragment.NewsContentActivity"
