@@ -6,10 +6,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
 import com.cuixuesen.helloworld.R
 
-class BroadcastMainActivity : AppCompatActivity() {
+class BroadcastMainActivity : BaseActivity() {
     lateinit var timeChangeReceiver: TimeChangeReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,6 +20,12 @@ class BroadcastMainActivity : AppCompatActivity() {
         intentFilter.addAction("android.intent.action.TIME_TICK")
         timeChangeReceiver = TimeChangeReceiver()
         registerReceiver(timeChangeReceiver, intentFilter)
+
+        val forceOffline: Button = findViewById(R.id.forceOffline)
+        forceOffline.setOnClickListener {
+            val intent = Intent("com.cuixuesen.helloworld.FORCE_OFFLINE")
+            sendBroadcast(intent)
+        }
     }
 
     override fun onDestroy() {

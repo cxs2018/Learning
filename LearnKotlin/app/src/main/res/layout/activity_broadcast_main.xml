@@ -5,5 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".broadcast.BroadcastMainActivity">
-
+<Button
+    android:id="@+id/forceOffline"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Send force offline broadcast" />
 </androidx.constraintlayout.widget.ConstraintLayout>
