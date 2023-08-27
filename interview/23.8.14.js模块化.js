@@ -8,10 +8,61 @@
 // 巧记：defer的意思是延迟，表示这个js脚本延迟执行，下载肯定是下载的，延迟一下执行，等页面渲染完成后执行；async：意思是异步执行，下载完执行
 // defer是渲染完再执行、async是下载完就执行
 // CommonJS规范（同步加载模块）
-// Node.js、Browserify require、module.exports 
+// Node.js、Browserify require、module.exports
 // AMD Asynchronous Module Definition 异步模块定义
 // CMD Common Module Definition 通用模块定义 sea.js
 // UMD Universal Module Definition 糅合了AMD和CommonJS，先判断是否支持exports，然后判断是否支持amd，否则将模块公开到全局（window、global）
 // ES6 模块化，尽量静态化，使得编译时就能确认模块的依赖关系，以及输入和输出的变量
 
 // 模块化的目标是支持大规模的程序开发，处理分散源中的代码的组装，并且能让代码正确运行，避免修改全局执行上下文
+var MyModules = (function Manager() {
+  var modules = {};
+
+  function define(name, deps, impl) {
+    for (var i = 0; i < deps.length; i++) {
+      // 根据依赖数组，取出对应的模块
+      deps[i] = modules[deps[i]];
+    }
+    modules[name] = impl.apply(impl, deps);
+  }
+
+  function get(name) {
+    return modules[name];
+  }
+
+  return {
+    define: define,
+    get: get,
+  };
+})();
+
+MyModules.define("bar", [], function () {
+  function hello(who) {
+    return "Let me introduce: " + who;
+  }
+
+  return {
+    hello: hello,
+  };
+});
+
+MyModules.define("foo", ["bar"], function (bar) {
+  var hungry = "hippo";
+
+  function awesome() {
+    console.log(bar.hello(hungry).toUpperCase());
+  }
+
+  return {
+    awesome: awesome,
+  };
+});
+
+var bar = MyModules.get("bar");
+var foo = MyModules.get("foo");
+
+console.log(bar.hello("hippo"));
+
+foo.awesome();
+
+// 模块模式：调用包装了函数定义的包装函数，并且将返回值作为该模块的API
