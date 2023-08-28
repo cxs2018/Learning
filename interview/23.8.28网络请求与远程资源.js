@@ -1,0 +1,1 @@
+// Ajax Asynchronous JavaScript + XML 异步JavaScript加XML

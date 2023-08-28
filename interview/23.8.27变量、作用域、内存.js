@@ -14,3 +14,17 @@ let person2 = person;
 setName(person);
 person2 = 3;
 console.log(person2, person);
+
+var location = {
+  href: "cxs"
+}
+
+function buildUrl() {
+  let qs = "?debug=true";
+  with (location) {
+    var url = href + qs;
+  }
+  return url;
+}
+
+console.log(buildUrl())
