@@ -1,0 +1,22 @@
+{
+  "name": "webpack23.8.30",
+  "version": "1.0.0",
+  "description": "learn webpack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --config webpack.config.js",
+    "dev": "webpack-dev-server --config webpack.config.js --static src --hot --devtool source-map"
+  },
+  "author": "cuixuesen",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^6.8.1",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "mini-css-extract-plugin": "^2.7.6",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}
