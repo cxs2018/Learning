@@ -26,7 +26,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \**********************/
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("let title = __webpack_require__(/*! ./result.txt */ \"./src/result.txt\");\r\nconsole.log(title.default);\r\n\n\n//# sourceURL=webpack://webpack5/./src/index.js?");
+eval("let title = __webpack_require__(/*! ./result.txt */ \"./src/result.txt\");\n\nconsole.log(title.default)\n\n\n//# sourceURL=webpack://webpack5/./src/index.js?");
 
 /***/ })
 
