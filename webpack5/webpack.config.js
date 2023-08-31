@@ -23,9 +23,24 @@ module.exports = {
   },
   module: {
     rules: [{ test: /\.txt$/, use: "raw-loader" }, { test: /\.css$/, use: ['style-loader', 'css-loader'] }, {
-      test: /\.less$/, use: ["style-loader", "css-loader", "less-loader"]
+      test: /\.less$/,
+      use: ["style-loader", "css-loader", "less-loader"]
     }, {
-      test: /\.scss$/, use: ["style-loader", "css-loader", "sass-loader"]
+      test: /\.scss$/,
+      use:
+        ["style-loader", "css-loader", "sass-loader"]
+    }, {
+      test: /\.png$/, use: [{
+        loader: 'file-loader',
+        options: {
+          name: "[hash:10].[ext]",
+          esModule: false,
+          // limit: 20 * 1024, // 大于这个的图片，会拷贝，像 file-loader 一样
+        }
+      }],
+    }, {
+      test: /\.html$/,
+      use: ["html-loader"]
     }],
   },
   plugins: [

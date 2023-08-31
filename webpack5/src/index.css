@@ -3,3 +3,10 @@
 body {
   color: red
 }
+
+#image-container {
+  border: 1px solid red;
+  width: 368px;
+  height: 248px;
+  background-image: url("./images/image1.png");
+}
