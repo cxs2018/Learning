@@ -8,6 +8,7 @@ module.exports = {
     path: resolve(__dirname, "dist"), // 输出文件夹的绝对路径
     filename: "main.js", // 输出的文件名
   },
+  devtool: 'source-map',
   devServer: {
     // contentBase: resolve(__dirname, 'dist'),
     port: 8080, // 端口
@@ -39,8 +40,21 @@ module.exports = {
         }
       }],
     }, {
-      test: /\.html$/,
-      use: ["html-loader"]
+      // test: /\.html$/,
+      // use: ["html-loader"]
+    }, {
+      test: /\.jsx?$/,
+      use: [
+        {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-env",
+              "@babel/preset-react"
+            ]
+          }
+        }
+      ]
     }],
   },
   plugins: [
