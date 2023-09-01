@@ -58,3 +58,16 @@ function loader(source) {
 loader.raw = true
 module.exports = loader
 ```
+
+7. https://stackoverflow.com/questions/65293577/uncaught-typeerror-is-not-a-function-in-core-js
+
+Uncaught TypeError: $ is not a function in core-js
+
+babel-loader 不要处理 core-js 的文件
+
+     test: /\.jsx?$/,
+      exclude: /node_modules/,
+      use: [
+        {
+          loader: "babel-loader",
+          xxx

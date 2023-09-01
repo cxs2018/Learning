@@ -17,4 +17,61 @@
 //   document.body.appendChild(image)
 // })
 
-let sum = (a, b) => a + b
+// let sum = (a, b) => a + b
+
+// import React from 'react'
+// import ReactDOM from 'react-dom'
+
+// class TestComponent extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       count: 1
+//     }
+//   }
+
+//   handleClick = () => {
+//     this.setState((state) => {
+//       return {
+//         count: state.count + 1
+//       }
+//     })
+//   }
+
+//   render() {
+//     return <div>
+//       <h2>{this.state.count}</h2>
+//       <button onClick={this.handleClick}>+</button>
+//     </div>
+//   }
+// }
+
+// function readonly(target, key, descriptor) {
+//   descriptor.writable = false
+// }
+
+// class Person {
+//   @readonly PI = 3.14
+// }
+
+// let p = new Person()
+
+// p.PI = 3.15
+
+// ReactDOM.render(<div>hello cxs happy everyday<TestComponent /></div>, document.getElementById("root"))
+
+// require("@babel/polyfill")
+// 如何按需加载？只用 promise 就引 promise
+
+// var promise = new Promise((resolve, reject) => {
+//   resolve(1)
+// });
+// promise.then((res) => {
+//   console.log(res)
+// })
+
+// import _ from 'lodash'
+require("lodash") // 如何不打包，走cdn的
+
+console.log(_.join(['a', 'b', 'c'], '_'))
+// console.log("cxs nihao happy everyday")

@@ -6,17 +6,28 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <!-- <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+  <script>
+    // VConsole 默认会挂载到 `window.VConsole` 上
+    var vConsole = new window.VConsole();
+  </script> -->
 </head>
 
 <body>
   <h1>hello world</h1>
-  <div id="less-container">less-container</div>
-  <div id="sass-container">sass-container</div>
+  <!-- <div id="less-container">less-container</div>
+  <div id="sass-container">sass-container</div> -->
   <!-- 静态资源 static -->
-  <img src="/image1.png" alt="" srcset="" />
+  <!-- <img src="/image1.png" alt="" srcset="" /> -->
   <!-- css-loader -->
-  <div id="image-container">image-container</div>
+  <!-- <div id="image-container">image-container</div> -->
   <!-- <img src="./images/image1.png" alt="" /> -->
+  <div id="root"></div>
+  <script>
+    setTimeout(() => {
+      console.log(window._)
+    })
+  </script>
 </body>
 
 </html>
