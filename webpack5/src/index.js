@@ -73,5 +73,5 @@
 // import _ from 'lodash'
 require("lodash") // 如何不打包，走cdn的
 
-console.log(_.join(['a', 'b', 'c'], '_'))
+alert(_.join(['a', 'b', 'c'], '_'))
 // console.log("cxs nihao happy everyday")

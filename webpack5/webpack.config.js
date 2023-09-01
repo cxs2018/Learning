@@ -3,6 +3,10 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin")
 
+// 编译时使用的全局变量，先设置，这里就可以用了
+const environmentation = process.env.NODE_ENV // dev ? pro
+let lodashCDN = environmentation == 'development' ? "./lodash.js" : "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js"
+
 module.exports = {
   mode: "development",
   entry: "./src/index.js", // 入口
@@ -100,7 +104,7 @@ module.exports = {
     new HtmlWebpackExternalsPlugin({
       externals: [{
         module: "lodash",
-        entry: "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js", // 可以用本地路径，只用能访问到就行 如 ./lodash.js（位于静态目录 static 中）、lodash.js
+        entry: lodashCDN, // 可以用本地路径，只用能访问到就行 如 ./lodash.js（位于静态目录 static 中）、lodash.js
         global: "_"
       }]
     })
