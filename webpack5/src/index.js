@@ -9,7 +9,7 @@
 // window.addEventListener("DOMContentLoaded", () => {
 //   document.body.append(`<h2>${title.default}</h2>`)
 
-//   // require 插入 image 
+//   // require 插入 image
 //   let logo = require("./images/image1.png")
 //   let image = new Image()
 //   // image.src = logo.default
@@ -71,7 +71,19 @@
 // })
 
 // import _ from 'lodash'
-require("lodash") // 如何不打包，走cdn的
+// require("lodash") // 如何不打包，走cdn的
 
-alert(_.join(['a', 'b', 'c'], '_'))
+// alert(_.join(['a', 'b', 'c'], '_'))
 // console.log("cxs nihao happy everyday")
+
+console.log(
+  "module index.js",
+  DEVELOPMENT,
+  EXPRESSION,
+  typeof EXPRESSION,
+  process.env.NODE_ENV
+);
+if (DEVELOPMENT) {
+  console.log("你好，开发环境");
+}
+console.log("业务逻辑");
