@@ -91,3 +91,8 @@ babel-loader 不要处理 core-js 的文件
 命令追加 --mode=development，打包模式会变成开发模式，模块内会给 process.env.NODE_ENV 赋值 development，默认是 production，可以被自定义的 DefinePlugin 覆盖
 
 cross-env NODE_ENV=development，会给 webpack node 环境赋值，process.env.NODE_ENV 为 development
+
+10. Array.from
+
+polyfill 原生 Array.prototype 加个方法 -- 适合业务代码使用，会污染全局变量
+runtime 新构造一个 Array，包含 from 方法 -- 适合开发库使用，如 lodash、jquery，不会污染全局变量

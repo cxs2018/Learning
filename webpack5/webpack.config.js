@@ -21,7 +21,7 @@ module.exports = (env) => {
       ? "./lodash.js"
       : "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js";
   return {
-    // mode: "development",
+    mode: "development",
     entry: "./src/index.js", // 入口
     output: {
       path: resolve(__dirname, "dist"), // 输出文件夹的绝对路径
@@ -84,6 +84,7 @@ module.exports = (env) => {
                   [
                     "@babel/preset-env",
                     {
+                      // 有了 babel-plugin-transform-runtime 不需要这里了，自动引入对应的方法，如promise，也不不会污染全局变量
                       useBuiltIns: "usage", // 按需加载 polyfill
                       corejs: {
                         version: 3,
@@ -95,10 +96,19 @@ module.exports = (env) => {
                         safari: "10",
                         edge: "17",
                       },
+                      loose: true,
                     },
                   ],
                 ],
                 plugins: [
+                  // [
+                  //   "@babel/plugin-transform-runtime",
+                  //   {
+                  //     corejs: 3,
+                  //     helpers: true,
+                  //     regenerator: true,
+                  //   },
+                  // ],
                   ["@babel/plugin-proposal-decorators", { legacy: true }],
                   // ["@babel/plugin-proposal-class-properties", { loose: true }] // 已包含在 "@babel/preset-env" 中，不用再单独引入了 https://babeljs.io/docs/babel-plugin-transform-class-properties
                 ],

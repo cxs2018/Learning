@@ -76,14 +76,40 @@
 // alert(_.join(['a', 'b', 'c'], '_'))
 // console.log("cxs nihao happy everyday")
 
-console.log(
-  "module index.js",
-  DEVELOPMENT,
-  EXPRESSION,
-  typeof EXPRESSION,
-  process.env.NODE_ENV
-);
-if (DEVELOPMENT) {
-  console.log("你好，开发环境");
-}
-console.log("业务逻辑");
+// console.log(
+//   "module index.js",
+//   DEVELOPMENT,
+//   EXPRESSION,
+//   typeof EXPRESSION,
+//   process.env.NODE_ENV
+// );
+// if (DEVELOPMENT) {
+//   console.log("你好，开发环境");
+// }
+// console.log("业务逻辑");
+
+// let Promise = require("babel-runtime/core-js/promise");
+// require("@babel/polyfill");
+
+// useBuiltIn：entry使用
+// require("core-js");
+// require("regenerator-runtime/runtime");
+// import Promise from "babel-runtime/core-js/promise"; // 这里用 require不行，why
+
+// console.log("start");
+// new Promise((resolve, reject) => {
+//   console.log("promise run");
+//   resolve("hello world");
+// }).then((res) => {
+//   console.log("babel-runtime promise: ", res);
+// });
+
+// class A {
+//   name = "cxs";
+// }
+
+// class B extends A {}
+
+// function* gen() {}
+
+Array.from([1, 2, 3]);
