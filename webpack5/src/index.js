@@ -1,8 +1,8 @@
 // let title = require("./result.txt");
 
-// import "./index.css"
-// import "./less.less"
-// import "./sass.scss"
+import "./index.css";
+import "./less.less";
+import "./sass.scss";
 
 // console.log(title.default)
 

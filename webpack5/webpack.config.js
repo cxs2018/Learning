@@ -5,6 +5,7 @@ const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin");
 const FileManagerWebpackPluggin = require("filemanager-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 // 编译时使用的全局变量，先设置，这里就可以用了
 const environmentation = process.env.NODE_ENV; // dev ? pro
@@ -27,12 +28,12 @@ module.exports = (env) => {
     mode: "development",
     entry: {
       main: "./src/index.js",
-      module2: "./src/module2.js",
+      // module2: "./src/module2.js",
     }, // 入口
     output: {
       path: resolve(__dirname, "dist"), // 输出文件夹的绝对路径
       filename: "[name].[hash:10].js", // 输出的文件名
-      // publicPath: "/",
+      publicPath: "/",
     },
     devtool: false,
     // devtool: false,
@@ -106,14 +107,14 @@ module.exports = (env) => {
     module: {
       rules: [
         { test: /\.txt$/, use: "raw-loader" },
-        { test: /\.css$/, use: ["style-loader", "css-loader"] },
+        { test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
         {
           test: /\.less$/,
-          use: ["style-loader", "css-loader", "less-loader"],
+          use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"],
         },
         {
           test: /\.scss$/,
-          use: ["style-loader", "css-loader", "sass-loader"],
+          use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
         },
         {
           test: /\.png$/,
@@ -239,6 +240,9 @@ module.exports = (env) => {
       }),
       new CleanWebpackPlugin({
         cleanOnceBeforeBuildPatterns: ["**/*"],
+      }),
+      new MiniCssExtractPlugin({
+        filename: "[name].css",
       }),
     ],
     // 如果已经通过cdn外链引入的方式引入了一个lodash库了，并且已经挂载到 _ 上了, key 是js里面引的三方库，value 是window上挂的值，直接 window._ = require("lodash")
