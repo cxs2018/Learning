@@ -2,6 +2,7 @@ const { resolve, join } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin");
+const FileManagerWebpackPluggin = require("filemanager-webpack-plugin");
 
 // 编译时使用的全局变量，先设置，这里就可以用了
 const environmentation = process.env.NODE_ENV; // dev ? pro
@@ -27,7 +28,7 @@ module.exports = (env) => {
       path: resolve(__dirname, "dist"), // 输出文件夹的绝对路径
       filename: "main.js", // 输出的文件名
     },
-    devtool: "source-map",
+    devtool: false,
     // devtool: false,
     devServer: {
       // contentBase: resolve(__dirname, 'dist'),
@@ -149,6 +150,25 @@ module.exports = (env) => {
         DEVELOPMENT: environmentation === "development",
         EXPRESSION: "1+2", // 会计算表达式的值 eval执行
       }),
+      // 可代替 devtools
+      // new webpack.SourceMapDevToolPlugin({
+      //   filename: "[file].map", // main.js -> main.js.map
+      //   append: "\n//# sourceMappingURL=http://localhost:8081/[url]", // sourcemap地址，浏览器会读取这个地址，显示代码源文件
+      // }),
+      // new FileManagerWebpackPluggin({
+      //   events: {
+      //     onEnd: {
+      //       copy: [
+      //         {
+      //           source: "./dist/*.map",
+      //           destination:
+      //             "D:/importantfiles/frontEndLearing/Learning/webpack5/sourcemap",
+      //         },
+      //       ],
+      //       delete: ["./dist/*.map"],
+      //     },
+      //   },
+      // }),
     ],
     // 如果已经通过cdn外链引入的方式引入了一个lodash库了，并且已经挂载到 _ 上了, key 是js里面引的三方库，value 是window上挂的值，直接 window._ = require("lodash")
     externals: {
