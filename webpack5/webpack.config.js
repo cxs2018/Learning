@@ -3,6 +3,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin");
 const FileManagerWebpackPluggin = require("filemanager-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 // 编译时使用的全局变量，先设置，这里就可以用了
 const environmentation = process.env.NODE_ENV; // dev ? pro
@@ -23,10 +25,14 @@ module.exports = (env) => {
       : "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js";
   return {
     mode: "development",
-    entry: "./src/index.js", // 入口
+    entry: {
+      main: "./src/index.js",
+      module2: "./src/module2.js",
+    }, // 入口
     output: {
       path: resolve(__dirname, "dist"), // 输出文件夹的绝对路径
-      filename: "main.js", // 输出的文件名
+      filename: "[name].[hash:10].js", // 输出的文件名
+      // publicPath: "/",
     },
     devtool: false,
     // devtool: false,
@@ -35,13 +41,67 @@ module.exports = (env) => {
       port: 8080, // 端口
       open: true, // 自动打开浏览器
       compress: true, // 启用压缩,
-      devMiddleware: {
-        writeToDisk: true,
-      },
+      // devMiddleware: {
+      //   writeToDisk: true,
+      // },
       static: {
         // 额外的文件
         directory: join(__dirname, "doc"),
       },
+      // proxy: {
+      //   "/api": {
+      //     target: "http://localhost:3000",
+      //     pathRewrite: {
+      //       "^/api": "",
+      //     },
+      //   },
+      // },
+      onBeforeSetupMiddleware: function (devServer) {
+        if (!devServer) {
+          throw new Error("webpack-dev-server is not defined");
+        }
+
+        devServer.app.get("/api/users", (req, res) => {
+          res.json([{ id: 1, name: "hello world" }]);
+        });
+      },
+      // setupMiddlewares: (middlewares, devServer) => {
+      //   if (!devServer) {
+      //     throw new Error("webpack-dev-server is not defined");
+      //   }
+
+      //   devServer.app.get("/api/getUserInfo", (_, response) => {
+      //     response.send("setup-middlewares option GET");
+      //   });
+
+      //   // 如果你想在所有其他中间件之前运行一个中间件或者当你从 `onBeforeSetupMiddleware` 配置项迁移时，
+      //   // 可以使用 `unshift` 方法
+      //   middlewares.unshift({
+      //     name: "first-in-array",
+      //     // `path` 是可选的
+      //     path: "/api/getUserInfo",
+      //     middleware: (req, res) => {
+      //       res.send("Foo!");
+      //     },
+      //   });
+
+      //   // 如果你想在所有其他中间件之后运行一个中间件或者当你从 `onAfterSetupMiddleware` 配置项迁移时，
+      //   // 可以使用 `push` 方法
+      //   middlewares.push({
+      //     name: "hello-world-test-one",
+      //     // `path` 是可选的
+      //     path: "/api/getUserInfo",
+      //     middleware: (req, res) => {
+      //       res.send("Foo Bar!");
+      //     },
+      //   });
+
+      //   middlewares.push((_, res) => {
+      //     res.send("hello world");
+      //   });
+
+      //   return middlewares;
+      // },
     },
     module: {
       rules: [
@@ -169,10 +229,27 @@ module.exports = (env) => {
       //     },
       //   },
       // }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: resolve(__dirname, "src/documents"),
+            to: resolve(__dirname, "dist/documents"),
+          },
+        ],
+      }),
+      new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: ["**/*"],
+      }),
     ],
     // 如果已经通过cdn外链引入的方式引入了一个lodash库了，并且已经挂载到 _ 上了, key 是js里面引的三方库，value 是window上挂的值，直接 window._ = require("lodash")
     externals: {
       // lodash: '_'
+    },
+    watch: false, // 监听文件变化，自动重新打包
+    watchOptions: {
+      ignored: /node_modules/,
+      aggregateTimeout: 300,
+      poll: 1000,
     },
   };
 };

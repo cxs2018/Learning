@@ -115,3 +115,19 @@
 // Array.from([1, 2, 3]);
 
 require("./utils");
+
+let a = "cxs";
+
+let b = () => {};
+
+new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject("error bow!!!");
+  }, 2000);
+})
+  .then((res) => {
+    console.log("res", res);
+  })
+  .catch((err) => {
+    console.log("err", err);
+  });
