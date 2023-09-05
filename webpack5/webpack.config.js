@@ -33,7 +33,8 @@ module.exports = (env) => {
     output: {
       path: resolve(__dirname, "dist"), // 输出文件夹的绝对路径
       filename: "[name].[hash:10].js", // 输出的文件名
-      publicPath: "/",
+      // publicPath: "/", // build 写 ./，serve写 /  or 都不写
+      chunkFilename: "[name].[hash:5].js"
     },
     devtool: false,
     // devtool: false,
@@ -42,9 +43,9 @@ module.exports = (env) => {
       port: 8080, // 端口
       open: true, // 自动打开浏览器
       compress: true, // 启用压缩,
-      // devMiddleware: {
-      //   writeToDisk: true,
-      // },
+      devMiddleware: {
+        writeToDisk: true,
+      },
       static: {
         // 额外的文件
         directory: join(__dirname, "doc"),
@@ -122,16 +123,20 @@ module.exports = (env) => {
             {
               loader: "file-loader",
               options: {
+                // name: "images/[hash:10].[ext]",
                 name: "[hash:10].[ext]",
                 esModule: false,
                 // limit: 20 * 1024, // 大于这个的图片，会拷贝，像 file-loader 一样
+                outputPath: "images",
+                publicPath: "./images"
+                // / 相当于根目录，不加 / 或 ./ 相对于当前文件，如相当于当前引入图片的 css 文件的相对路径
               },
             },
           ],
         },
         {
-          // test: /\.html$/,
-          // use: ["html-loader"]
+          test: /\.html$/,
+          use: ["html-loader"]
         },
         {
           test: /\.jsx?$/,

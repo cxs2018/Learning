@@ -114,20 +114,26 @@ import "./sass.scss";
 
 // Array.from([1, 2, 3]);
 
-require("./utils");
+// require("./utils");
 
-let a = "cxs";
+// let a = "cxs";
 
-let b = () => {};
+// let b = () => {};
 
-new Promise((resolve, reject) => {
-  setTimeout(() => {
-    reject("error bow!!!");
-  }, 2000);
+// new Promise((resolve, reject) => {
+//   setTimeout(() => {
+//     reject("error bow!!!");
+//   }, 2000);
+// })
+//   .then((res) => {
+//     console.log("res", res);
+//   })
+//   .catch((err) => {
+//     console.log("err", err);
+//   });
+
+import "./index.css"
+
+import("./utils").then(result => {
+  console.log(result)
 })
-  .then((res) => {
-    console.log("res", res);
-  })
-  .catch((err) => {
-    console.log("err", err);
-  });
