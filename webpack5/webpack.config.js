@@ -6,6 +6,8 @@ const FileManagerWebpackPluggin = require("filemanager-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 // 编译时使用的全局变量，先设置，这里就可以用了
 const environmentation = process.env.NODE_ENV; // dev ? pro
@@ -25,7 +27,7 @@ module.exports = (env) => {
       ? "./lodash.js"
       : "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js";
   return {
-    mode: "development",
+    mode: env.production ? 'production' : 'development',
     entry: {
       main: "./src/index.js",
       // module2: "./src/module2.js",
@@ -35,6 +37,13 @@ module.exports = (env) => {
       filename: "[name].[hash:10].js", // 输出的文件名
       // publicPath: "/", // build 写 ./，serve写 /  or 都不写
       chunkFilename: "[name].[hash:5].js"
+    },
+    optimization: {
+      minimize: env && env.production, // 是否开启压缩
+      minimizer: env && env.production ? [
+        // 压缩js
+        new TerserPlugin()
+      ] : []
     },
     devtool: false,
     // devtool: false,
@@ -108,14 +117,21 @@ module.exports = (env) => {
     module: {
       rules: [
         { test: /\.txt$/, use: "raw-loader" },
-        { test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
+        {
+          test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", {
+            loader: "px2rem-loader",
+            options: {
+              remUnit: 75
+            }
+          }]
+        },
         {
           test: /\.less$/,
-          use: [MiniCssExtractPlugin.loader, "css-loader", "less-loader"],
+          use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "less-loader"],
         },
         {
           test: /\.scss$/,
-          use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+          use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "sass-loader"],
         },
         {
           test: /\.png$/,
@@ -199,6 +215,10 @@ module.exports = (env) => {
       new HtmlWebpackPlugin({
         template: "./src/index.html",
         inject: "body",
+        minify: {
+          collapseWhitespace: true,
+          removeComments: true
+        }
       }),
       // new webpack.ProvidePlugin({
       //   _: 'lodash'
@@ -235,21 +255,23 @@ module.exports = (env) => {
       //     },
       //   },
       // }),
-      new CopyPlugin({
-        patterns: [
-          {
-            from: resolve(__dirname, "src/documents"),
-            to: resolve(__dirname, "dist/documents"),
-          },
-        ],
-      }),
+      // new CopyPlugin({
+      //   patterns: [
+      //     {
+      //       from: resolve(__dirname, "src/documents"),
+      //       to: resolve(__dirname, "dist/documents"),
+      //     },
+      //   ],
+      // }),
       new CleanWebpackPlugin({
         cleanOnceBeforeBuildPatterns: ["**/*"],
       }),
       new MiniCssExtractPlugin({
         filename: "[name].css",
       }),
-    ],
+      // 压缩css
+      env && env.production && new OptimizeCssAssetsPlugin()
+    ].filter(Boolean),
     // 如果已经通过cdn外链引入的方式引入了一个lodash库了，并且已经挂载到 _ 上了, key 是js里面引的三方库，value 是window上挂的值，直接 window._ = require("lodash")
     externals: {
       // lodash: '_'

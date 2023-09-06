@@ -10,3 +10,19 @@ body {
   height: 248px;
   background-image: url("./images/image1.png");
 }
+
+::placeholder {
+  color: red;
+}
+
+#root {
+  width: 750px;
+  height: 750px;
+  border: 1px solid red;
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0px;
+  padding: 0px
+}

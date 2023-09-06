@@ -98,3 +98,5 @@ polyfill 原生 Array.prototype 加个方法 -- 适合业务代码使用，会�
 runtime 新构造一个 Array，包含 from 方法 -- 适合开发库使用，如 lodash、jquery，不会污染全局变量
 
 11. http-server 在调用命令的文件夹，开启本地服务
+
+12. mode == production 会启用优化，包括压缩js，和 terser-webpack-plugin 只做js压缩范围不一样

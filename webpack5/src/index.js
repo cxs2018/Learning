@@ -1,8 +1,8 @@
 // let title = require("./result.txt");
 
 import "./index.css";
-import "./less.less";
-import "./sass.scss";
+// import "./less.less";
+// import "./sass.scss";
 
 // console.log(title.default)
 
@@ -132,8 +132,12 @@ import "./sass.scss";
 //     console.log("err", err);
 //   });
 
-import "./index.css"
+// import "./index.css"
 
-import("./utils").then(result => {
-  console.log(result)
-})
+// import("./utils").then(result => {
+//   console.log(result)
+// })
+
+import { sum } from './utils'
+
+console.log("sum", sum(100, 200))
