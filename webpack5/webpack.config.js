@@ -1,5 +1,6 @@
-const { resolve, join } = require("path");
+const { resolve, join, basename } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const fs = require("fs");
 const webpack = require("webpack");
 const HtmlWebpackExternalsPlugin = require("html-webpack-externals-plugin");
 const FileManagerWebpackPluggin = require("filemanager-webpack-plugin");
@@ -13,6 +14,27 @@ const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const environmentation = process.env.NODE_ENV; // dev ? pro
 console.log("build params", environmentation);
 // let lodashCDN = environmentation == 'development' ? "./lodash.js" : "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js"
+
+const pagesRoot = resolve(__dirname, 'src', 'pages')
+const pages = fs.readdirSync(pagesRoot)
+let htmlWebpackPlugins = [];
+const entry = pages.reduce((entry, fileName) => {
+  let entryName = basename(fileName, '.js')
+  entry[entryName] = join(pagesRoot, fileName)
+  htmlWebpackPlugins.push(
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+      filename: `${entryName}.html`,
+      chunks: [entryName],
+      inject: "body",
+      minify: {
+        collapseWhitespace: true,
+        removeComments: true
+      }
+    })
+  )
+  return entry
+}, {})
 
 module.exports = (env) => {
   console.log(
@@ -28,10 +50,7 @@ module.exports = (env) => {
       : "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.js";
   return {
     mode: env.production ? 'production' : 'development',
-    entry: {
-      main: "./src/index.js",
-      // module2: "./src/module2.js",
-    }, // 入口
+    entry, // 入口
     output: {
       path: resolve(__dirname, "dist"), // 输出文件夹的绝对路径
       filename: "[name].[hash:10].js", // 输出的文件名
@@ -211,15 +230,7 @@ module.exports = (env) => {
         // },
       ],
     },
-    plugins: [
-      new HtmlWebpackPlugin({
-        template: "./src/index.html",
-        inject: "body",
-        minify: {
-          collapseWhitespace: true,
-          removeComments: true
-        }
-      }),
+    plugins: (htmlWebpackPlugins.concat([
       // new webpack.ProvidePlugin({
       //   _: 'lodash'
       // })
@@ -271,7 +282,7 @@ module.exports = (env) => {
       }),
       // 压缩css
       env && env.production && new OptimizeCssAssetsPlugin()
-    ].filter(Boolean),
+    ])).filter(Boolean),
     // 如果已经通过cdn外链引入的方式引入了一个lodash库了，并且已经挂载到 _ 上了, key 是js里面引的三方库，value 是window上挂的值，直接 window._ = require("lodash")
     externals: {
       // lodash: '_'
