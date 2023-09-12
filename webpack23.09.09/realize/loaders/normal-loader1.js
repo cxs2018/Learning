@@ -3,4 +3,8 @@ function loader(source) {
   return source + "// normal-loader1"
 }
 
+loader.pitch = function () {
+  console.log("normal-pitch1")
+}
+
 module.exports = loader
