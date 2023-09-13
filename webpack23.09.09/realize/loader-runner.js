@@ -50,7 +50,32 @@ function loadLoader(loadObject) {
   loadObject.raw = normal.raw
 }
 
+function runSyncOrAsync(fn, context, args, callback) {
+  let isSync = true; // 默认是同步
+  let isDone = false; // 是否完成，是否执行过此函数了，默认是false
+  context.async = function () {
+    if (isDone) {
+      throw new Error("这个callback已经调用过了")
+    }
+    isSync = false;
+    return innerCallback;
+  }
+  const innerCallback = context.callback = function () {
+    isDone = true; // 表示当前函数已经完成
+    isSync = false; // 改为异步
+    callback.apply(null, arguments) // 执行callback
+  }
+  let result = fn.apply(context, args)
+  if (isSync) {
+    isDone = true;
+    return callback(null, result)
+  }
+}
+
 function iteratePitchingLoaders(options, loaderContext, callback) {
+  if (loaderContext.loaderIndex >= loaderContext.loaders.length) {
+    return;
+  }
   // 获取当前的loader loaderIndex=0 loader1
   let currentLoaderObject = loaderContext.loaders[loaderContext.loaderIndex]
   if (currentLoaderObject.pitchExecuted) {
@@ -63,7 +88,16 @@ function iteratePitchingLoaders(options, loaderContext, callback) {
   if (!pitchFunction) {
     return iteratePitchingLoaders(options, loaderContext, callback)
   } else {
-
+    runSyncOrAsync(pitchFunction, loaderContext, [loaderContext.remainingRequest, loaderContext.previousRequest, loaderContext.data], function (err, args) {
+      if (args) {
+        // 如果 args 有值，说明 pitch 有返回值
+        loaderContext.loaderIndex--; // 索引减1，开始回退了
+        // iterateNormalLoaders(options, loaderContext, args, callback)
+      } else {
+        // 如果没有返回值，则执行下一个loader的pitch函数
+        iteratePitchingLoaders(options, loaderContext, callback)
+      }
+    })
   }
 }
 
@@ -132,7 +166,6 @@ exports.runLoaders = function (options, callback) {
     resourceBuffer: null, // 最终loader执行的结果放到这个，Buffer格式,
     readSource,
   }
-  debugger
   iteratePitchingLoaders(processOptions, loaderContext, function (err, result) {
     if (err) {
       return callback(err, {})
