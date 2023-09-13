@@ -1,20 +1,21 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
-const FileManagerWepackPlugin = require("filemanager-webpack-plugin")
+const FileManagerWepackPlugin = require("filemanager-webpack-plugin");
 // const babelLoader = path.join(__dirname, "realize/loaders/babel-loader.js");
 
 module.exports = {
   mode: "development",
   entry: "./src/index.js",
-  // devtool: "source-map",
+  devtool: false,
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].js",
+    clean: true,
   },
-  // resolveLoader: {
-  //   modules: ["node_modules", path.join(__dirname, "realize/loaders")],
-  // },
+  resolveLoader: {
+    modules: ["node_modules", path.join(__dirname, "realize/loaders")],
+  },
   module: {
     rules: [
       {
@@ -43,8 +44,31 @@ module.exports = {
                   },
                 ],
               ],
-            }
-          }
+            },
+          },
+        ],
+      },
+      // {
+      //   test: /\.(jpg|png|gif|bmp)$/,
+      //   use: [
+      //     {
+      //       loader: "file-loader-my",
+      //       options: {
+      //         filename: "[hash].[ext]",
+      //       },
+      //     },
+      //   ],
+      // },
+      {
+        test: /\.(jpg|png|gif|bmp)$/,
+        use: [
+          {
+            loader: "url-loader-my",
+            options: {
+              limit: 20 * 1024,
+              filename: "[hash].[ext]",
+            },
+          },
         ],
       },
     ],
@@ -55,28 +79,28 @@ module.exports = {
       filename: "index.html",
       chunks: ["main"],
     }),
-    new webpack.SourceMapDevToolPlugin({
-      append: "//# sourcemapMappingURL=http:127.0.0.1:5500/sourcemap/[url]",
-      filename: "[file].map"
-    }),
-    new FileManagerWepackPlugin({
-      events: {
-        onEnd: {
-          copy: [
-            {
-              source: "./dist/**/*.map",
-              destination: path.resolve(__dirname, "sourcemap")
-            }
-          ],
-          delete: ["./dist/**/*.map"],
-          archive: [
-            {
-              source: "./dist",
-              destination: "./archive/project.zip" // 要先建立 archive 文件夹
-            }
-          ]
-        }
-      }
-    })
+    // new webpack.SourceMapDevToolPlugin({
+    //   append: "//# sourcemapMappingURL=http:127.0.0.1:5500/sourcemap/[url]",
+    //   filename: "[file].map"
+    // }),
+    // new FileManagerWepackPlugin({
+    //   events: {
+    //     onEnd: {
+    //       copy: [
+    //         {
+    //           source: "./dist/**/*.map",
+    //           destination: path.resolve(__dirname, "sourcemap")
+    //         }
+    //       ],
+    //       delete: ["./dist/**/*.map"],
+    //       archive: [
+    //         {
+    //           source: "./dist",
+    //           destination: "./archive/project.zip" // 要先建立 archive 文件夹
+    //         }
+    //       ]
+    //     }
+    //   }
+    // })
   ],
 };
