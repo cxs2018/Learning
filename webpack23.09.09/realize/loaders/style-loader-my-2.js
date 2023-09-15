@@ -1,4 +1,5 @@
-const path = require("path")
+const path = require("path");
+const { stringifyRequest } = require("loader-utils");
 
 function loader(source) {
   // console.log("style-loader: ", source);
@@ -11,14 +12,17 @@ function loader(source) {
 }
 
 loader.pitch = function (remainingRequest, previousRequest, data) {
-  const str = path.relative(this.context, remainingRequest)
-  console.log("style-loader: ", remainingRequest, str);
-  let script =
-    `let style = document.createElement("style")
-  style.innerHTML = require(${"!!" + str})
-  document.head.appendChild(style)
-  module.exports = ""`
-  return script
-}
+  console.log(
+    "style-loader: ",
+    remainingRequest,
+    this.resource,
+    stringifyRequest(this, "!!" + remainingRequest)
+  );
+  let script = `let style = document.createElement("style")
+  style.innerHTML = require(${stringifyRequest(this, "!!" + remainingRequest)})
+  document.head.appendChild(style)`;
+  console.log("script: ", script);
+  return script;
+};
 
-module.exports = loader
+module.exports = loader;
