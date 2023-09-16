@@ -16,4 +16,4 @@
 
 // document.body.appendChild(image);
 
-import "./index.less"
+import "./index.css";

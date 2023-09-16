@@ -75,8 +75,15 @@ module.exports = {
         test: /\.less$/,
         use: [
           "style-loader-my-2", // 把样式文本变成一个style标签插入到页面中
-          // "css-loader",
+          // "css-loader-my",
           "less-loader-my", // 把less编译成css
+        ],
+      },
+      {
+        test: /\.css$/,
+        use: [
+          "style-loader-my-2", // 把样式文本变成一个style标签插入到页面中
+          "css-loader-my",
         ],
       },
     ],
