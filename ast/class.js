@@ -11,6 +11,7 @@ let code = `class Person {
   }
 }`
 
+
 let classPlugin = {
   visitor: {
     ClassDeclaration(path) {
@@ -37,7 +38,7 @@ let classPlugin = {
 
 // babel本身只是一个引擎，并不能转换源代码
 let result = babel.transform(code, {
-  plugins: [classPlugin],
+  plugins: [classPlugin]
 });
 
 console.log(result.code);
