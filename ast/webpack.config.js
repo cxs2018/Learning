@@ -12,23 +12,24 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "main.js",
   },
+  devtool: false,
   module: {
-    rules: [
-      {
-        test: /\.js$/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            plugins: [
-              [
-                path.resolve(__dirname, "plugins/babel-plugin-import.js"),
-                { library: "lodash" },
-              ],
-            ],
-          },
-        },
-      },
-    ],
+    // rules: [
+    //   {
+    //     test: /\.js$/,
+    //     use: {
+    //       loader: "babel-loader",
+    //       options: {
+    //         plugins: [
+    //           [
+    //             path.resolve(__dirname, "plugins/babel-plugin-import.js"),
+    //             { library: "lodash" },
+    //           ],
+    //         ],
+    //       },
+    //     },
+    //   },
+    // ],
   },
   plugins: [
     // new DonePlugin(),
@@ -36,11 +37,11 @@ module.exports = {
     // new ZipPlugin({ filename: "asset-custom.zip" }),
     new AutoExternalPlugin({
       jquery: {
-        expose: "$",
+        variable: "$",
         url: "https://code.jquery.com/jquery-3.7.1.min.js",
       },
       lodash: {
-        expose: "_",
+        variable: "_",
         url: "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.core.min.js",
       },
     }),

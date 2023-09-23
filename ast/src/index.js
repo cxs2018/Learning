@@ -1,4 +1,8 @@
-import { flatten, concat } from "lodash";
+import _ from "lodash";
+// const $ = require("jquery");
 // import flatten from "lodash/flatten";
 // import concat from "lodash/concat";
-console.log(flatten, concat);
+
+setTimeout(() => {
+  console.log("cxs", _);
+}, 2000);
