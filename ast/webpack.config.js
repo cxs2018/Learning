@@ -39,16 +39,16 @@ module.exports = {
     // new DonePlugin(),
     // new AssetsPlugin(),
     // new ZipPlugin({ filename: "asset-custom.zip" }),
-    // new AutoExternalPlugin({
-    //   jquery: {
-    //     variable: "$",
-    //     url: "https://code.jquery.com/jquery-3.7.1.min.js",
-    //   },
-    //   lodash: {
-    //     variable: "_",
-    //     url: "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.core.min.js",
-    //   },
-    // }),
+    new AutoExternalPlugin({
+      jquery: {
+        variable: "$",
+        url: "https://code.jquery.com/jquery-3.7.1.min.js",
+      },
+      lodash: {
+        variable: "_",
+        url: "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.core.min.js",
+      },
+    }),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
