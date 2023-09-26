@@ -6,7 +6,7 @@ const webpack = function (options) {
   // 1. 验证配置文件是否合法，如果不合法，报错
   // 2. 增加默认参数
   // 创建一个 Compiler 实例
-  let compiler = new Compiler(options);
+  let compiler = new Compiler(options.context);
   compiler.options = options;
   // 让 compiler 可以读写文件
   new NodeEnvironmentPlugin().apply(compiler);
@@ -18,6 +18,7 @@ const webpack = function (options) {
     }
   }
 
+  // 初始化选项（挂载内置插件）
   new WebpackOptionsApply().process(options, compiler);
   return compiler;
 };

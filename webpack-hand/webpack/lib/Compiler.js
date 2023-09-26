@@ -10,6 +10,7 @@ const {
 
 const NormalModuleFactory = require("./NormalModuleFactory");
 const Compilation = require("./Compilation");
+const Stats = require("./Stats");
 
 class Compiler extends Tapable {
   constructor(context) {
@@ -22,7 +23,7 @@ class Compiler extends Tapable {
       run: new AsyncSeriesHook(["compiler"]), // 运行
       beforeCompile: new AsyncSeriesHook(["params"]), // 编译前
       compile: new SyncHook(["params"]), // 编译
-      make: new AsyncParallelHook("compilation"), // make构建
+      make: new AsyncParallelHook(["compilation"]), // make构建
       thisCompilation: new SyncHook(["compilation", "params"]), // 开始一次新的编译
       compilation: new SyncHook(["compilation", "params"]), // 创建完成一个新的compilation
       afterCompile: new AsyncSeriesHook(["compilation"]), // 编译完成
@@ -32,17 +33,12 @@ class Compiler extends Tapable {
   run(callback) {
     console.log("Compiler run", this.context);
     // 最终回调
-    const finalCallback = (err, stats) => {
-      callback(err, stats);
+    const finalCallback = (err, compilation) => {
+      callback(err, new Stats(compilation));
     };
     const onCompiled = (err, compilation) => {
       console.log("onCompiled");
-      finalCallback(err, {
-        entrypoints: [], // 入口
-        chunks: [], // 代码块
-        modules: [], // 模块
-        assets: [], // 资源
-      });
+      finalCallback(err, compilation);
     };
     this.hooks.beforeRun.callAsync(this, (err) => {
       this.hooks.run.callAsync(this, (err) => {
@@ -55,11 +51,12 @@ class Compiler extends Tapable {
     const params = this.newCompilationParams();
     this.hooks.beforeCompile.callAsync(params, (err) => {
       this.hooks.compile.call(params);
-      debugger;
+      // 创建一个新的compilation对象
       const compilation = this.newCompilation(params);
+      // 触发make钩子的回调函数执行
       this.hooks.make.callAsync(compilation, (err) => {
         console.log("make done");
-        onCompiled();
+        onCompiled(null, compilation);
       });
     });
   }

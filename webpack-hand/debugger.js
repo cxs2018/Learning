@@ -1,13 +1,8 @@
-const webpack = require("./webpack/lib/webpack")
-const webpackOptions = require("./webpack.config")
+const webpack = require("./webpack/lib/webpack");
+const webpackOptions = require("./webpack.config");
 
-const compiler = webpack(webpackOptions)
-
+const compiler = webpack(webpackOptions);
+debugger;
 compiler.run((err, stats) => {
-  console.log(err, stats.toJson({
-    entrypoints: true,
-    chunks: true,
-    modules: true,
-    assets: true,
-  }))
-})
+  console.log(err, stats);
+});

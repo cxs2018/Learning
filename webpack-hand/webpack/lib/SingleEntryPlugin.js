@@ -1,3 +1,5 @@
+const Compilation = require("./Compilation");
+
 class SingleEntryPlugin {
   constructor(context, entry, name) {
     this.context = context; // 入口的上下文绝对路径
@@ -12,7 +14,7 @@ class SingleEntryPlugin {
         const { context, entry, name } = this;
         // 从此入口开始编译入口文件和它的依赖
         console.log("SingleEntryPlugin make");
-        // compilation.addEntry(context, entry, name, callback);
+        compilation.addEntry(context, entry, name, callback);
       },
     );
   }
