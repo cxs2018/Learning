@@ -1,7 +1,5 @@
-class Tapable1 {}
-
 const {
-  Tapable = Tapable1,
+  Tapable,
   AsyncSeriesHook,
   SyncBailHook,
   AsyncParallelHook,
@@ -11,13 +9,14 @@ const {
 const NormalModuleFactory = require("./NormalModuleFactory");
 const Compilation = require("./Compilation");
 const Stats = require("./Stats");
+const { mkdirp } = require("mkdirp");
+const path = require("path");
 
 class Compiler extends Tapable {
   constructor(context) {
     super();
     this.context = context;
     this.hooks = {
-      done: new AsyncSeriesHook(["stats"]), // 当编译完成后触发这个钩子执行
       entryOption: new SyncBailHook(["context", "entry"]),
       beforeRun: new AsyncSeriesHook(["compiler"]), // 运行前
       run: new AsyncSeriesHook(["compiler"]), // 运行
@@ -27,18 +26,20 @@ class Compiler extends Tapable {
       thisCompilation: new SyncHook(["compilation", "params"]), // 开始一次新的编译
       compilation: new SyncHook(["compilation", "params"]), // 创建完成一个新的compilation
       afterCompile: new AsyncSeriesHook(["compilation"]), // 编译完成
+      emit: new AsyncSeriesHook(["compilation"]), // 要写入文件了
+      done: new AsyncSeriesHook(["stats"]), // 所有的编译都完成了
     };
   }
 
   run(callback) {
     console.log("Compiler run", this.context);
-    // 最终回调
-    const finalCallback = (err, compilation) => {
-      callback(err, new Stats(compilation));
-    };
     const onCompiled = (err, compilation) => {
-      console.log("onCompiled");
-      finalCallback(err, compilation);
+      this.emitAssets(compilation, () => {
+        let stats = new Stats(compilation);
+        this.hooks.done.callAsync(stats, (err) => {
+          callback(err, stats);
+        });
+      });
     };
     this.hooks.beforeRun.callAsync(this, (err) => {
       this.hooks.run.callAsync(this, (err) => {
@@ -56,7 +57,12 @@ class Compiler extends Tapable {
       // 触发make钩子的回调函数执行
       this.hooks.make.callAsync(compilation, (err) => {
         console.log("make done");
-        onCompiled(null, compilation);
+        // 该 seal 封装了
+        compilation.seal((err) => {
+          this.hooks.afterCompile.callAsync(compilation, (err) => {
+            onCompiled(err, compilation);
+          });
+        });
       });
     });
   }
@@ -77,6 +83,28 @@ class Compiler extends Tapable {
 
   createCompilation() {
     return new Compilation(this);
+  }
+
+  emitAssets(compilation, callback) {
+    console.log("onCompiled");
+    // 把chunk变成文件，写入硬盘
+    const emitFile = (err, params2) => {
+      console.log("emitFile", err, params2);
+      const assets = compilation.assets;
+      let outputPath = this.options.output.path;
+      for (const file in assets) {
+        let source = assets[file];
+        let targetPath = path.posix.join(outputPath, file);
+        this.outputFileSystem.writeFileSync(targetPath, source, "utf8");
+      }
+      callback();
+    };
+    this.hooks.emit.callAsync(compilation, () => {
+      // 先创建输出目录dist，再写入硬盘
+      console.log("mkdirp", this.options.output.path, compilation.assets);
+      mkdirp(this.options.output.path).then(emitFile);
+    });
+    // finalCallback(err, compilation);
   }
 }
 

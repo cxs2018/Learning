@@ -37,7 +37,7 @@ class NormalModule {
         CallExpression: (nodePath) => {
           let node = nodePath.node; // 获取节点
           if (node.callee.name === "require") {
-            node.callee.name = "__webpack__require__";
+            node.callee.name = "__webpack_require__";
             // 如果方法名是require方法的话
             let moduleName = node.arguments[0].value; // 模块的名称
             // 扩展名

@@ -1,11 +1,19 @@
 let { Tapable, SyncHook } = require("tapable");
 const NormalModuleFactory = require("./NormalModuleFactory");
-const Parser = require("../Parser");
+const Parser = require("./Parser");
 const parser = new Parser();
 const path = require("path");
 
 const normalModuleFactory = new NormalModuleFactory();
 const async = require("neo-async");
+const Chunk = require("./Chunk");
+const ejs = require("ejs");
+const fs = require("fs");
+const mainTemplate = fs.readFileSync(
+  path.join(__dirname, "templates", "main.ejs"),
+  "utf8",
+);
+const mainRender = ejs.compile(mainTemplate);
 
 class Compilation extends Tapable {
   constructor(compiler) {
@@ -18,9 +26,15 @@ class Compilation extends Tapable {
     this.entries = []; // 入口数组，这里放着所有的入口模块
     this.modules = []; // 模块的数组，这里放着所有的模块
     this._modules = {}; // key 是模块id，值是模块对象
+    this.chunks = []; //这里放着所有的代码块
+    this.files = []; //这里放着本次编译所有的文件名
+    this.assets = {}; // 存放着生成的资源，key 是文件名，value是文件内容
     this.hooks = {
       // 当成功构建完成一个模块后，就会触发此钩子执行
       succeedModule: new SyncHook(["module"]),
+      seal: new SyncHook(),
+      beforeChunks: new SyncHook(),
+      afterChunks: new SyncHook(),
     };
   }
 
@@ -123,6 +137,45 @@ class Compilation extends Tapable {
       }
     };
     this.buildModule(module, afterBuild);
+  }
+
+  /**
+   * 把模块封装成代码块 chunk
+   * @param callback
+   */
+  seal(callback) {
+    this.hooks.seal.call();
+    this.hooks.beforeChunks.call();
+    for (const entryModule of this.entries) {
+      const chunk = new Chunk(entryModule); // 先根据入口模块得到一个代码块
+      this.chunks.push(chunk);
+      // 对所有模块进行过滤，找出来那些名称跟这个chunk一样的模块，组成一个数组赋给chunk.modules
+      chunk.modules = this.modules.filter(
+        (module) => module.name === chunk.name,
+      );
+    }
+    this.hooks.afterChunks.call(this.chunks);
+    // 生成代码块之后，要生成代码块对应资源
+    this.createChunkAssets();
+    callback();
+  }
+
+  createChunkAssets() {
+    for (let i = 0; i < this.chunks.length; i++) {
+      const chunk = this.chunks[i];
+      const file = chunk.name + ".js";
+      chunk.files.push(file);
+      let source = mainRender({
+        entryModuleId: chunk.entryModule.moduleId, // ./src/index.js
+        modules: chunk.modules, // 此代码块对应的模块数组
+      });
+      this.emitAssets(file, source);
+    }
+  }
+
+  emitAssets(file, source) {
+    this.assets[file] = source;
+    this.files.push(file);
   }
 }
 
