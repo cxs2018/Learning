@@ -7,3 +7,7 @@ import(/* webpackChunkName: 'title' */ "./title").then((result) => {
 import(/* webpackChunkName: 'content' */ "./content").then((result) => {
   console.log("content", result);
 });
+
+const isArray = require("isarray");
+
+console.log("isArray []", isArray([]));

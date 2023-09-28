@@ -51,30 +51,29 @@ class NormalModule {
             node.callee.name = "__webpack_require__";
             // 如果方法名是require方法的话
             let moduleName = node.arguments[0].value; // 模块的名称
-            // 扩展名
-            let extName =
-              moduleName.split(path.posix.sep).pop().indexOf(".") == -1
-                ? ".js"
-                : "";
-            console.log(
-              "moduleName",
-              moduleName,
-              extName,
-              this.context,
-              this.resource,
-            );
-            let depResource = path.posix.join(
-              path.posix.dirname(this.resource),
-              moduleName + extName,
-            );
+            let extName, depResource;
+            if (moduleName.startsWith(".")) {
+              // 以 . 开头，说明是用户自定义模块或本地模块
+              // 扩展名
+              extName =
+                moduleName.split(path.posix.sep).pop().indexOf(".") == -1
+                  ? ".js"
+                  : "";
+              depResource = path.posix.join(
+                path.posix.dirname(this.resource),
+                moduleName + extName,
+              );
+            } else {
+              // 否则是第三方模块 node_modules 里面的
+              depResource = require.resolve(
+                path.posix.join(this.context, "node_modules", moduleName),
+              ); // require.resolve 找入口 node规则
+              depResource = depResource.replace(/\\/g, "/"); // 把windows里的 \ 转成 /
+            }
             // 获取模块ID，./src/title.js
             let depModuleId =
               "./" + path.posix.relative(this.context, depResource);
-            console.log(
-              "depModuleId",
-              depModuleId,
-              types.stringLiteral(depModuleId),
-            );
+            // let depModuleId = '.' + dependencyResource.slice(this.context.length); // 另一种写法，windows上可能会用到
             // 把 require 的参数从 ./title.js -> ./src/index.js
             node.arguments = [types.stringLiteral(depModuleId)];
             this.dependencies.push({

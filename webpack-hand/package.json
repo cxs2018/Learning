@@ -15,6 +15,7 @@
     "babel-traverse": "^6.26.0",
     "babel-types": "^6.26.0",
     "ejs": "^3.1.9",
+    "isarray": "^2.0.5",
     "mkdirp": "^3.0.1",
     "neo-async": "^2.6.2",
     "tapable": "1.1.1",
