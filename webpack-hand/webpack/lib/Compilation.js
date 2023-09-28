@@ -14,6 +14,11 @@ const mainTemplate = fs.readFileSync(
   "utf8",
 );
 const mainRender = ejs.compile(mainTemplate);
+const chunkTemplate = fs.readFileSync(
+  path.join(__dirname, "templates", "chunk.ejs"),
+  "utf8",
+);
+const chunkRender = ejs.compile(chunkTemplate);
 
 class Compilation extends Tapable {
   constructor(compiler) {
@@ -46,12 +51,12 @@ class Compilation extends Tapable {
    * @param finalCallback 编译完成的回调
    */
   addEntry(context, entry, name, finalCallback) {
-    this._addModuleChain(context, entry, name, (err, module) => {
+    this._addModuleChain(context, entry, name, false, (err, module) => {
       finalCallback(err, module);
     });
   }
 
-  _addModuleChain(context, rawRequest, name, callback) {
+  _addModuleChain(context, rawRequest, name, async, callback) {
     this.createModule(
       {
         name,
@@ -59,6 +64,10 @@ class Compilation extends Tapable {
         rawRequest,
         parser,
         resource: path.posix.join(context, rawRequest),
+        moduleId:
+          "./" +
+          path.posix.relative(context, path.posix.join(context, rawRequest)),
+        async,
       },
       (entryModule) => {
         this.entries.push(entryModule);
@@ -120,7 +129,6 @@ class Compilation extends Tapable {
     // 先通过模块工厂创建一个模块
     let module = normalModuleFactory.create(data);
     console.log("this.context", this.context);
-    module.moduleId = "./" + path.posix.relative(this.context, module.resource); // ./src/index.js
     if (addEntry) {
       // 如果这个模块是入口模块，就把它放到 entries 里面去
       addEntry(module);
@@ -165,10 +173,18 @@ class Compilation extends Tapable {
       const chunk = this.chunks[i];
       const file = chunk.name + ".js";
       chunk.files.push(file);
-      let source = mainRender({
-        entryModuleId: chunk.entryModule.moduleId, // ./src/index.js
-        modules: chunk.modules, // 此代码块对应的模块数组
-      });
+      let source;
+      if (chunk.async) {
+        source = chunkRender({
+          chunkName: chunk.name,
+          modules: chunk.modules, // 此代码块对应的模块数组
+        });
+      } else {
+        source = mainRender({
+          entryModuleId: chunk.entryModule.moduleId, // ./src/index.js
+          modules: chunk.modules, // 此代码块对应的模块数组
+        });
+      }
       this.emitAssets(file, source);
     }
   }

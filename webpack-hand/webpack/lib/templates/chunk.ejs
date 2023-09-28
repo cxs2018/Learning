@@ -1,0 +1,12 @@
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["<%-chunkName%>"], {
+    <%
+    for(let module of modules)
+    {%>
+        "<%-module.moduleId%>":
+        (function (module, exports, __webpack_require__) {
+            console.log("崔学森自己生成的webpack模版 chunk.ejs", "<%-module.moduleId%>");
+          <%-module._source%>
+        }),
+    <%}
+  %>
+  }]);
