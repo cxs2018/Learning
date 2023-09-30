@@ -56,7 +56,7 @@ class NormalModule {
               // 以 . 开头，说明是用户自定义模块或本地模块
               // 扩展名
               extName =
-                moduleName.split(path.posix.sep).pop().indexOf(".") == -1
+                moduleName.split(path.posix.sep).pop().indexOf(".") === -1
                   ? ".js"
                   : "";
               depResource = path.posix.join(
@@ -71,9 +71,9 @@ class NormalModule {
               depResource = depResource.replace(/\\/g, "/"); // 把windows里的 \ 转成 /
             }
             // 获取模块ID，./src/title.js
-            let depModuleId =
-              "./" + path.posix.relative(this.context, depResource);
-            // let depModuleId = '.' + dependencyResource.slice(this.context.length); // 另一种写法，windows上可能会用到
+            // let depModuleId =
+            //   "./" + path.posix.relative(this.context, depResource);
+            let depModuleId = "." + depResource.slice(this.context.length); // 另一种写法，windows上可能会用到
             // 把 require 的参数从 ./title.js -> ./src/index.js
             node.arguments = [types.stringLiteral(depModuleId)];
             this.dependencies.push({

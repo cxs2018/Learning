@@ -8,7 +8,15 @@ const itemToPlugin = (context, entry, name) => {
 class EntryOptionPlugin {
   apply(compiler) {
     compiler.hooks.entryOption.tap("EntryOptionPlugin", (context, entry) => {
-      itemToPlugin(context, entry, "main").apply(compiler);
+      if (typeof entry === "string") {
+        // 单入口
+        itemToPlugin(context, entry, "main").apply(compiler);
+      } else {
+        // 多入口
+        for (const entryName in entry) {
+          itemToPlugin(context, entry[entryName], entryName).apply(compiler);
+        }
+      }
     });
   }
 }
