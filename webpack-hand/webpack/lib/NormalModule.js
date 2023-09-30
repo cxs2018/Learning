@@ -3,6 +3,8 @@ const types = require("babel-types");
 const generator = require("babel-generator");
 const traverse = require("babel-traverse");
 const async = require("neo-async");
+const { runLoaders } = require("./loader-runner");
+const { call } = require("babel-traverse/lib/path/context");
 
 class NormalModule {
   constructor({
@@ -149,9 +151,33 @@ class NormalModule {
    */
   doBuild(compilation, callback) {
     this.getSource(compilation, (err, source) => {
-      // 把最原始的代码存放到当前模块的 _source 属性上
-      this._source = source;
-      callback();
+      // loader在这么处理
+      let {
+        module: { rules },
+      } = compilation.options;
+      let loaders = [];
+      for (let i = 0; i < rules.length; i++) {
+        let rule = rules[i];
+        if (rule.test.test(this.resource)) {
+          loaders.push(...rule.use);
+        }
+      }
+      // 获取loader的绝对路径
+      const resolveLoader = (loader) =>
+        require.resolve(path.posix.join(this.context, "loaders", loader));
+      loaders = loaders.map(resolveLoader);
+
+      runLoaders(
+        {
+          resource: this.resource,
+          loaders,
+        },
+        (err, { result, resourceBuffer }) => {
+          // 把最原始的代码存放到当前模块的 _source 属性上
+          this._source = result.toString();
+          callback();
+        },
+      );
     });
   }
 
