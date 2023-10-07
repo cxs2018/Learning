@@ -7,6 +7,7 @@ console.log(Object.prototype.toString.call(null));
 console.log(Object.prototype.toString.call(undefined));
 console.log(Object.prototype.toString.call({}));
 console.log(Object.prototype.toString.call(function () {}));
+// 调用原型的 toString 而不是 直接 .toString 是因为子对象可以重写 toString，这里想用原始方法
 
 /**
  * [object String]
@@ -67,7 +68,7 @@ for (const key in obj) {
 delete obj.age;
 console.log(obj.age);
 
-// 位操作
+// 4. 位操作
 const a = 0b0100; // 二进制
 const b = 0o66; // 0o、0 8进制
 const c = 0xab; // 十六进制
