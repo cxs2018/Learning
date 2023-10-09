@@ -1,0 +1,5 @@
+commonjs加载commonjs
+默认，不用动
+
+webpack 里面都是commonjs语法（自己实现的）
+所以加载es6模块需要转成commonjs模块
