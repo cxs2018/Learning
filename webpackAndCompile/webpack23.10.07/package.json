@@ -8,14 +8,16 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -r dist && webpack"
+    "build": "node ./patch.js && webpack"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "html-webpack-plugin": "^4.5.2",
+    "shelljs": "^0.8.5",
     "webpack": "4.44.2",
     "webpack-cli": "3.3.5"
-  }
+  },
+  "dependencies": {}
 }
