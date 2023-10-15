@@ -9,8 +9,23 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].js",
   },
+  resolveLoader: {
+    modules: ["node_modules", path.join(__dirname, "loaders")],
+  },
   module: {
-    rules: [],
+    rules: [
+      {
+        test: /\.png$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              filename: "[hash].[ext]",
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({

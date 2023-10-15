@@ -1,7 +1,9 @@
-let importButton = document.getElementById("import");
+const url = require("./logo.png");
 
-importButton.addEventListener("click", () => {
-  import(/* webpackChunkName: "title" */ "./title").then((result) => {
-    console.log("动态导入title result", result);
-  });
-});
+console.log("source url", url);
+
+const image = new Image();
+
+image.src = url;
+
+document.body.appendChild(image);
