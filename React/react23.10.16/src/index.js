@@ -1,13 +1,3 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from "./react";
 
-const dom = React.createElement(
-  "h1",
-  {
-    id: "title",
-  },
-  "hello",
-);
-console.log("dom", dom);
-
-ReactDOM.render(dom, document.getElementById("root"));
+React.render("hello", document.getElementById("root"));

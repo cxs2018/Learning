@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "jquery": "^3.7.1",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-scripts": "4.0.3"
