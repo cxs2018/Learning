@@ -1,15 +1,20 @@
 import $ from "jquery";
 import { createUnit } from "./unit";
+import { createElement } from "./element";
+import { Component } from "./component";
 
 function render(element, container) {
   let unit = createUnit(element);
-  let makeUp = unit.getMarkUp(React.rootIndex);
+  let makeUp = unit.getMarkUp("0");
+
   $(container).html(makeUp);
+  $(document).trigger("mounted");
 }
 
 const React = {
   render,
-  rootIndex: 0,
+  createElement,
+  Component,
 };
 
 export default React;
