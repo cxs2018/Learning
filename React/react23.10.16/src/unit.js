@@ -2,6 +2,9 @@ import React from "./react";
 import { Element } from "./element";
 import $ from "jquery";
 
+let diffQueue = []; // 差异队列
+let updateDepth = 0; // 更新的级别
+
 class Unit {
   constructor(element) {
     this._currentElement = element;
@@ -36,6 +39,7 @@ class NativeUnit extends Unit {
     let tagStart = `<${type} data-reactid="${this._reactid}"`;
     let childString = "";
     let tagEnd = `</${type}>`;
+    this._renderedChildrenUnits = [];
     for (const propName in props) {
       if (/^on[A-Z]/.test(propName)) {
         // 事件
@@ -63,6 +67,7 @@ class NativeUnit extends Unit {
         let children = props[propName];
         children.map((child, index) => {
           let childUnit = createUnit(child);
+          this._renderedChildrenUnits.push(childUnit);
           let childMarkUp = childUnit.getMarkUp(`${this._reactid}.${index}`);
           childString += childMarkUp;
         });
@@ -75,6 +80,130 @@ class NativeUnit extends Unit {
     }
     return tagStart + ">" + childString + tagEnd;
   }
+
+  update(nextElement) {
+    let oldProps = this._currentElement.props;
+    let newProps = nextElement.props;
+    this.updateDOMProperties(oldProps, newProps);
+    this.updateDOMChildren(nextElement.props.children);
+  }
+
+  /**
+   * 更新props
+   * @param oldProps
+   * @param newProps
+   */
+  updateDOMProperties(oldProps, newProps) {
+    let propName;
+    for (propName in oldProps) {
+      if (!newProps.hasOwnProperty(propName)) {
+        // 老的有新的没有
+        // 新props内没有这个属性，移除
+        $(`[data-reactid="${this._reactid}"]`).removeAttr(propName);
+        // 如果是事件，根据命名空间取消绑定
+        if (/on[A-Z]/.test(propName)) {
+          $(document).undelegate(`.${this._reactid}`);
+        }
+      }
+    }
+    for (propName in newProps) {
+      if (propName === "children") {
+        // 儿子属性先不处理
+        continue;
+      } else if (/^on[A-Z]/.test(propName)) {
+        // 重新绑定事件
+        let eventName = propName.slice(2).toLowerCase();
+        // 先取消老事件 zhufeng好像没写，但是没出问题，奇怪，可能是jquery版本
+        $(document).undelegate(`.${this._reactid}`);
+        $(document).delegate(
+          `[data-reactid="${this._reactid}"]`,
+          `${eventName}.${this._reactid}`,
+          newProps[propName],
+        );
+      } else if (propName === "className") {
+        // $(`[data-reactid="${this._reactid}"]`)[0].className = newProps[propName];
+        $(`[data-reactid="${this._reactid}"]`).attr(
+          "class",
+          newProps[propName],
+        );
+      } else if (propName === "style") {
+        // 样式
+        let styleObj = newProps[propName];
+        Object.entries(styleObj).map(([attr, value]) => {
+          // 这时候dom已经有了，直接调jquery css方法设置样式，不用提前驼峰转下划线
+          $(`[data-reactid="${this._reactid}"]`).css(attr, value);
+        });
+      } else {
+        $(`[data-reactid="${this._reactid}"]`).prop(
+          propName,
+          newProps[propName],
+        );
+      }
+    }
+  }
+
+  /**
+   * 更新儿子们，新儿子与老儿子对比，找出差异，进行修改DOM
+   * @param newChildrenElements
+   */
+  updateDOMChildren(newChildrenElements) {
+    this.diff(diffQueue, newChildrenElements);
+  }
+
+  /**
+   * 新老儿子diff
+   * @param diffQueue
+   * @param newChildrenElements
+   */
+  diff(diffQueue, newChildrenElements) {
+    let oldChildrenUnitMap = this.getOldChildrenMap(
+      this._renderedChildrenUnits,
+    );
+    let newChildren = this.getNewChildren(
+      oldChildrenUnitMap,
+      newChildrenElements,
+    );
+  }
+
+  /**
+   * 获取新儿子，根据老儿子的unit，和新儿子虚拟dom
+   * @param oldChildrenUnitMap
+   * @param newChildrenElements
+   * @returns {*[]}
+   */
+  getNewChildren(oldChildrenUnitMap, newChildrenElements) {
+    let newChildren = [];
+    newChildrenElements.forEach((newElement, index) => {
+      let newKey =
+        (newElement.props && newElement.props.key) || index.toString();
+      let oldUnit = oldChildrenUnitMap[newKey]; // 去老的儿子集合里找找有没有新儿子
+      let oldElement = oldUnit && oldUnit._currentElement; // 获取老元素
+      if (shouldDeepCompare(oldElement, newElement)) {
+        // 类型一样，递归
+        oldUnit.update(newElement);
+        // 改了老的，复用
+        newChildren.push(oldUnit);
+      } else {
+        // 类型不一样，新建新的
+        let newUnit = createUnit(newElement);
+        newChildren.push(newUnit);
+      }
+    });
+    return newChildren;
+  }
+
+  getOldChildrenMap(childrenUnits = []) {
+    let map = {};
+    for (let i = 0; i < childrenUnits.length; i++) {
+      let key =
+        (childrenUnits[i] &&
+          childrenUnits[i]._currentElement.props &&
+          childrenUnits[i]._currentElement.props.key) ||
+        i.toString();
+      map[key] = childrenUnits[i];
+    }
+    return map;
+  }
 }
 
 class CompositeUnit extends Unit {
@@ -83,15 +212,15 @@ class CompositeUnit extends Unit {
     let { type: Component, props } = this._currentElement;
     let componentInstance = (this._componentInstance = new Component(props));
     componentInstance._currentUnit = this;
-    componentInstance.componentDidMount &&
-      componentInstance.componentDidMount();
+    componentInstance.componentWillMount &&
+      componentInstance.componentWillMount();
     let renderedElement = componentInstance.render();
     let renderedUnitInstance = (this._renderedUnitInstance =
       createUnit(renderedElement));
     let renderedMarkup = renderedUnitInstance.getMarkUp(this._reactid);
     $(document).on("mounted", () => {
-      componentInstance.componentWillUnMount &&
-        componentInstance.componentWillUnMount();
+      componentInstance.componentDidMount &&
+        componentInstance.componentDidMount();
     });
     return renderedMarkup;
   }
