@@ -1,6 +1,7 @@
 import React from "./react";
 import { Element } from "./element";
 import $ from "jquery";
+import types from "./types";
 
 let diffQueue = []; // 差异队列
 let updateDepth = 0; // 更新的级别
@@ -67,6 +68,7 @@ class NativeUnit extends Unit {
         let children = props[propName];
         children.map((child, index) => {
           let childUnit = createUnit(child);
+          childUnit._mountIndex = index; // 每个unit有个_mountIndex属性，用来指向自己在父节点中的位置
           this._renderedChildrenUnits.push(childUnit);
           let childMarkUp = childUnit.getMarkUp(`${this._reactid}.${index}`);
           childString += childMarkUp;
@@ -156,23 +158,71 @@ class NativeUnit extends Unit {
    * @param newChildrenElements
    */
   diff(diffQueue, newChildrenElements) {
+    // 生成一个map，key=老unit
     let oldChildrenUnitMap = this.getOldChildrenMap(
       this._renderedChildrenUnits,
     );
-    let newChildren = this.getNewChildren(
+    // 生成一个新儿子unit数组
+    let { newChildrenUnits, newChildrenUnitMap } = this.getNewChildren(
       oldChildrenUnitMap,
       newChildrenElements,
     );
+    let lastIndex = 0; // 上一个已经确定位置的索引
+    for (let i = 0; i < newChildrenUnits.length; i++) {
+      let newUnit = newChildrenUnits[i];
+      // 拿到新孩子的key
+      let newKey =
+        (newUnit._currentElement.props && newUnit._currentElement.props.key) ||
+        i.toString();
+      // 用新key去老unit map里面找有没有
+      let oldChildUnit = oldChildrenUnitMap[newKey];
+      if (oldChildUnit === newUnit) {
+        // 如果新老一致的话，说明是复用老节点
+        if (oldChildUnit._mountIndex < lastIndex) {
+          // 说明老儿子要移动
+          diffQueue.push({
+            parentId: this._reactid,
+            parentNode: $(`[data-reactid="${this._reactid}"]`),
+            type: types.MOVE,
+            fromIndex: oldChildUnit._mountIndex,
+            toIndex: i,
+          });
+        }
+        lastIndex = Math.max(lastIndex, oldChildUnit._mountIndex);
+      } else {
+        // 不一样，说明老的没有 oldChildUnit = undefined
+        diffQueue.push({
+          parentId: this._reactid,
+          parentNode: $(`[data-reactid="${this._reactid}"]`),
+          type: types.INSERT,
+          toIndex: i,
+          markUp: newUnit.getMarkUp(`${this._reactid}.${i}`),
+        });
+      }
+      newUnit._mountIndex = i;
+    }
+    for (let oldKey in oldChildrenUnitMap) {
+      if (!newChildrenUnitMap.hasOwnProperty(oldKey)) {
+        // 老儿子在新儿子数组中里面没有，要删除
+        diffQueue.push({
+          parentId: this._reactid,
+          parentNode: $(`[data-reactid="${this._reactid}"]`),
+          type: types.REMOVE,
+          fromIndex: oldChildrenUnitMap[oldKey]._mountIndex,
+        });
+      }
+    }
+    console.log("diffQueue", diffQueue);
   }
 
   /**
    * 获取新儿子，根据老儿子的unit，和新儿子虚拟dom
    * @param oldChildrenUnitMap
    * @param newChildrenElements
-   * @returns {*[]}
    */
   getNewChildren(oldChildrenUnitMap, newChildrenElements) {
-    let newChildren = [];
+    let newChildrenUnits = [];
+    let newChildrenUnitMap = {};
     newChildrenElements.forEach((newElement, index) => {
       let newKey =
         (newElement.props && newElement.props.key) || index.toString();
@@ -182,14 +232,16 @@ class NativeUnit extends Unit {
         // 类型一样，递归
         oldUnit.update(newElement);
         // 改了老的，复用
-        newChildren.push(oldUnit);
+        newChildrenUnits.push(oldUnit);
+        newChildrenUnitMap[newKey] = oldUnit;
       } else {
         // 类型不一样，新建新的
         let newUnit = createUnit(newElement);
-        newChildren.push(newUnit);
+        newChildrenUnits.push(newUnit);
+        newChildrenUnitMap[newKey] = newUnit;
       }
     });
-    return newChildren;
+    return { newChildrenUnits, newChildrenUnitMap };
   }
 
   getOldChildrenMap(childrenUnits = []) {

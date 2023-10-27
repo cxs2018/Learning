@@ -33,34 +33,39 @@ class Counter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      number: 0,
+      odd: true,
     };
   }
 
-  handleClick = () => {
-    this.setState({
-      number: this.state.number + 1,
-    });
-  };
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({
+        odd: !this.state.odd,
+      });
+    }, 1000);
+  }
 
   render() {
-    let p = React.createElement("p", {}, this.state.number);
-    let button = React.createElement(
-      "button",
-      { onClick: this.handleClick },
-      "+",
-    );
-    return React.createElement(
-      "div",
-      {
-        style: {
-          backgroundColor: this.state.number % 2 ? "red" : "green",
-          color: this.state.number % 2 ? "green" : "red",
-        },
-      },
-      p,
-      button,
-    );
+    if (this.state.odd) {
+      return React.createElement(
+        "ul",
+        { id: "oldCounter" },
+        React.createElement("li", { key: "A" }, "A"),
+        React.createElement("li", { key: "B" }, "B"),
+        React.createElement("li", { key: "C" }, "C"),
+        React.createElement("li", { key: "D" }, "D"),
+      );
+    } else {
+      return React.createElement(
+        "ul",
+        { id: "newCounter" },
+        React.createElement("li", { key: "A" }, "A1"),
+        React.createElement("li", { key: "C" }, "C1"),
+        React.createElement("li", { key: "B" }, "B1"),
+        React.createElement("li", { key: "E" }, "E1"),
+        React.createElement("li", { key: "F" }, "F"),
+      );
+    }
   }
 }
 
