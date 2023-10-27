@@ -239,7 +239,18 @@ class NativeUnit extends Unit {
         }
         lastIndex = Math.max(lastIndex, oldChildUnit._mountIndex);
       } else {
-        // 不一样，说明老的没有 oldChildUnit = undefined
+        // 老的有，但是没有复用，因为type不一样
+        if (oldChildUnit) {
+          // key一样，类型不一样，需要删掉老的
+          diffQueue.push({
+            parentId: this._reactid,
+            parentNode: $(`[data-reactid="${this._reactid}"]`),
+            type: types.REMOVE,
+            fromIndex: oldChildUnit._mountIndex,
+          });
+          $(document).undelegate(`.${oldChildUnit._reactid}`);
+        }
+        // 或者老的没有 oldChildUnit = undefined
         diffQueue.push({
           parentId: this._reactid,
           parentNode: $(`[data-reactid="${this._reactid}"]`),
@@ -248,6 +259,7 @@ class NativeUnit extends Unit {
           markUp: newUnit.getMarkUp(`${this._reactid}.${i}`),
         });
       }
+
       newUnit._mountIndex = i;
     }
     for (let oldKey in oldChildrenUnitMap) {
