@@ -168,7 +168,10 @@ class NativeUnit extends Unit {
         // 删除、移动
         let fromIndex = difference.fromIndex;
         let oldChild = $(difference.parentNode.children().get(fromIndex));
-        deleteMap[fromIndex] = oldChild;
+        if (!deleteMap[difference.parentId]) {
+          deleteMap[difference.parentId] = {};
+        }
+        deleteMap[difference.parentId][fromIndex] = oldChild;
         deleteChildren.push(oldChild);
       }
     }
@@ -189,7 +192,7 @@ class NativeUnit extends Unit {
           this.insertChildAt(
             difference.parentNode,
             difference.toIndex,
-            deleteMap[difference.fromIndex],
+            deleteMap[difference.parentId][difference.fromIndex],
           );
           break;
       }
@@ -236,6 +239,7 @@ class NativeUnit extends Unit {
             fromIndex: oldChildUnit._mountIndex,
             toIndex: i,
           });
+          // TODO 感觉位置会错乱，dom移动了，unit却没有移动
         }
         lastIndex = Math.max(lastIndex, oldChildUnit._mountIndex);
       } else {
@@ -248,6 +252,10 @@ class NativeUnit extends Unit {
             type: types.REMOVE,
             fromIndex: oldChildUnit._mountIndex,
           });
+          // 删掉老儿子unit
+          this._renderedChildrenUnits = this._renderedChildrenUnits.filter(
+            (item) => item !== oldChildUnit,
+          );
           $(document).undelegate(`.${oldChildUnit._reactid}`);
         }
         // 或者老的没有 oldChildUnit = undefined
@@ -271,6 +279,12 @@ class NativeUnit extends Unit {
           type: types.REMOVE,
           fromIndex: oldChildrenUnitMap[oldKey]._mountIndex,
         });
+        // 删掉老儿子unit
+        this._renderedChildrenUnits = this._renderedChildrenUnits.filter(
+          (item) => item !== oldChildrenUnitMap[oldKey],
+        );
+        // 如果要删除掉某一个节点，要把事件取消掉
+        $(document).undelegate(`.${oldChildrenUnitMap[oldKey]._reactid}`);
       }
     }
     console.log("diffQueue", diffQueue);
@@ -300,6 +314,8 @@ class NativeUnit extends Unit {
         let newUnit = createUnit(newElement);
         newChildrenUnits.push(newUnit);
         newChildrenUnitMap[newKey] = newUnit;
+        // 需要把老的unit替换成新的
+        this._renderedChildrenUnits[index] = newUnit;
       }
     });
     return { newChildrenUnits, newChildrenUnitMap };

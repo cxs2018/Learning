@@ -14,4 +14,4 @@ React.Component原理
 
 setState原理
 
-Next learn: 任务4 网页 Global Speed
+23.10.27 遗留bug todos 用ul、li的话，最后一个li删不掉 debugger看看为啥
