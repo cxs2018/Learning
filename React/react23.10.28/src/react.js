@@ -1,3 +1,4 @@
+import Component from "./Component";
 /**
  * 创建虚拟DOM
  * @param type
@@ -23,6 +24,7 @@ function createElement(type, config, children) {
 
 const React = {
   createElement,
+  Component,
 };
 
 export default React;
