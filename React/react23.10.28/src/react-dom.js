@@ -3,6 +3,7 @@ import { addEvent } from "./event";
 function render(vdom, container) {
   const dom = createDOM(vdom);
   container.appendChild(dom);
+  dom.componentDidMount && dom.componentDidMount();
 }
 
 /**
@@ -82,8 +83,14 @@ function mountFunctionComponent(vdom) {
 function mountClassComponent(vdom) {
   let { type, props } = vdom;
   let classInstance = new type(props);
+  if (classInstance.componentWillMount) {
+    classInstance.componentWillMount();
+  }
   let renderVdom = classInstance.render();
   let dom = createDOM(renderVdom);
+  if (classInstance.componentDidMount) {
+    dom.componentDidMount = classInstance.componentDidMount.bind(classInstance);
+  }
   classInstance.dom = dom;
   return dom;
 }

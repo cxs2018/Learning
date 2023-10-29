@@ -28,6 +28,14 @@ class Updater {
     if (typeof callback === "function") {
       this.callbacks.push(callback);
     }
+    this.emitUpdate();
+  }
+
+  /**
+   * 触发更新，状态、属性变化都会触发
+   * @param newProps
+   */
+  emitUpdate(newProps) {
     if (updateQueue.isBatchingUpdate) {
       // 如果当前是批量更新模式，先缓存updater
       updateQueue.updaters.add(this);
@@ -40,10 +48,7 @@ class Updater {
   updateClassComponent() {
     let { classInstance, pendingStates, callbacks } = this;
     if (pendingStates.length > 0) {
-      classInstance.state = this.getState(); // 计算最新状态
-      classInstance.forceUpdate();
-      callbacks.forEach((cb) => cb.call(classInstance));
-      callbacks.length = 0;
+      shouldUpdate(classInstance, this.getState(), callbacks);
     }
   }
 
@@ -82,8 +87,14 @@ class Component {
    * 强制更新组件UI
    */
   forceUpdate() {
+    if (this.componentWillUpdate) {
+      this.componentWillUpdate();
+    }
     let newVdom = this.render();
     updateClassComponent(this, newVdom);
+    if (this.componentDidUpdate) {
+      this.componentDidUpdate();
+    }
   }
 }
 
@@ -96,6 +107,30 @@ function updateClassComponent(classInstance, newVdom) {
   oldDOM.parentNode.replaceChild(newDOM, oldDOM);
   // 更新新真实DOM到this上
   classInstance.dom = newDOM;
+}
+
+/**
+ * 判断组件是否需要更新
+ * 不管组件UI要不要刷新，state一定要改变
+ * @param classInstance
+ * @param nextState
+ * @param callbacks
+ */
+function shouldUpdate(classInstance, nextState, callbacks) {
+  classInstance.state = nextState;
+  if (
+    classInstance.shouldComponentUpdate &&
+    !classInstance.shouldComponentUpdate(
+      classInstance.props,
+      classInstance.state,
+    )
+  ) {
+    // shouldComponentUpdate返回false，不触发组件更新
+    return;
+  }
+  classInstance.forceUpdate();
+  callbacks.forEach((cb) => cb.call(classInstance));
+  callbacks.length = 0;
 }
 
 export default Component;
