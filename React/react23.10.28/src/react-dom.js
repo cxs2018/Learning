@@ -39,7 +39,8 @@ export function createDOM(vdom) {
   } else {
     document.textContent = props.children ? props.children.toString() : "";
   }
-  // vdom.dom = dom;
+  // 当根据一个vdom创建出来一个真实dom之后，把真实dom挂载到虚拟dom上
+  vdom.dom = dom;
   return dom;
 }
 
@@ -77,6 +78,7 @@ function reconcileChildren(childrenVdom, parentDOM) {
 function mountFunctionComponent(vdom) {
   let { type: FunctionComponent, props } = vdom;
   let renderVdom = FunctionComponent(props);
+  vdom.oldRenderVdom = renderVdom;
   return createDOM(renderVdom);
 }
 
@@ -86,12 +88,79 @@ function mountClassComponent(vdom) {
   if (classInstance.componentWillMount) {
     classInstance.componentWillMount();
   }
+  vdom.classInstance = classInstance;
   let renderVdom = classInstance.render();
+  // 挂载到虚拟dom上
+  vdom.oldRenderVdom = renderVdom;
   let dom = createDOM(renderVdom);
   if (classInstance.componentDidMount) {
     dom.componentDidMount = classInstance.componentDidMount.bind(classInstance);
   }
   classInstance.dom = dom;
+  return dom;
+}
+
+/**
+ * 对当前组件进行DOM-diff比较
+ * @param parentDOM 当前组件挂载的父真实DON节点
+ * @param oldVdom 上一次的虚拟DOM
+ * @param newVdom 这一次新的虚拟DOM
+ * @param nextDOM 要插入节点的插入位置，将会插到这个节前面
+ */
+export function compareTwoVdom(parentDOM, oldVdom, newVdom, nextDOM) {
+  // 新老虚拟dom都没有
+  if (!oldVdom && !newVdom) {
+    return null;
+  } else if (oldVdom && !newVdom) {
+    // 老的有，新的没有 -> 删掉老的
+    let currentDOM = findDOM(oldVdom);
+    if (currentDOM) {
+      parentDOM.removeChild(currentDOM);
+    }
+    if (oldVdom.classInstance && oldVdom.classInstance.componentWillUnmount) {
+      oldVdom.classInstance.componentWillUnmount();
+    }
+    return null;
+  } else if (newVdom && !oldVdom) {
+    // 新的有，老的没有 -> 新建新的
+    let newDOM = createDOM(newVdom);
+    if (nextDOM) {
+      parentDOM.insertBefore(newDOM, nextDOM);
+    } else {
+      parentDOM.appendChild(newDOM);
+    }
+    return newVdom;
+  } else if (oldVdom && newVdom && oldVdom.type !== newVdom.type) {
+    // 新老dom都有，但是类型不一样
+    let oldDOM = findDOM(oldVdom);
+    let newDOM = findDOM(newVdom);
+    parentDOM.replaceChild(newDOM, oldDOM);
+    if (oldVdom.classInstance && oldVdom.classInstance.componentWillUnmount) {
+      oldVdom.classInstance.componentWillUnmount();
+    }
+  } else {
+    // 新老dom都有，且类型一致，进行深度比较，需要更新自己的属性、深度比较儿子们
+    updateElement(oldVdom, newVdom);
+    return newVdom;
+  }
+}
+
+function updateElement(oldVdom, newVdom) {}
+
+/**
+ * 查找此虚拟DOM对应的真实DOM，类组件、函数组件、原生dom处理方式不一样
+ * @param vdom
+ */
+function findDOM(vdom) {
+  let { type } = vdom;
+  let dom;
+  if (typeof type === "function") {
+    // 类组件、函数组件
+    dom = findDOM(vdom.oldRenderVdom);
+  } else {
+    // 原生dom
+    dom = vdom.dom;
+  }
   return dom;
 }
 

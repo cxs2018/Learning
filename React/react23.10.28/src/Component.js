@@ -1,4 +1,4 @@
-import { createDOM } from "./react-dom";
+import { compareTwoVdom, createDOM } from "./react-dom";
 
 /**
  * 批量更新
@@ -90,14 +90,28 @@ class Component {
     if (this.componentWillUpdate) {
       this.componentWillUpdate();
     }
-    let newVdom = this.render();
-    updateClassComponent(this, newVdom);
+    let newRenderVdom = this.render();
+    let oldRenderVdom = this.oldRenderVdom;
+    let oldDOM = oldRenderVdom.dom;
+    let currentRenderVdom = compareTwoVdom(
+      oldDOM.parentNode,
+      oldRenderVdom,
+      newRenderVdom,
+    );
+    this.oldRenderVdom = currentRenderVdom;
     if (this.componentDidUpdate) {
       this.componentDidUpdate();
     }
   }
 }
 
+/**
+ * 简单粗暴更新节点，删除老的，新建新的，替换
+ * @version 1
+ * @param classInstance
+ * @param newVdom
+ * @deprecated
+ */
 function updateClassComponent(classInstance, newVdom) {
   // 取出this上挂的老真实DOM
   let oldDOM = classInstance.dom;
