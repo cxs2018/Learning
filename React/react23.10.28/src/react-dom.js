@@ -26,7 +26,7 @@ export function createDOM(vdom) {
   } else {
     dom = document.createElement(type);
   }
-  updateProps(dom, props);
+  updateProps(dom, {}, props);
   if (
     typeof props.children === "string" ||
     typeof props.children === "number"
@@ -47,9 +47,10 @@ export function createDOM(vdom) {
 /**
  * 更新props
  * @param dom
+ * @param oldProps
  * @param newProps
  */
-function updateProps(dom, newProps) {
+function updateProps(dom, oldProps, newProps) {
   for (const key in newProps) {
     if (key === "children") continue;
     if (key === "style") {
@@ -92,6 +93,8 @@ function mountClassComponent(vdom) {
   let renderVdom = classInstance.render();
   // 挂载到虚拟dom上
   vdom.oldRenderVdom = renderVdom;
+  // 组件实例this上也挂载下
+  classInstance.oldRenderVdom = renderVdom;
   let dom = createDOM(renderVdom);
   if (classInstance.componentDidMount) {
     dom.componentDidMount = classInstance.componentDidMount.bind(classInstance);
@@ -145,7 +148,19 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom, nextDOM) {
   }
 }
 
-function updateElement(oldVdom, newVdom) {}
+/**
+ * 深度比较这两个虚拟DOM
+ * @param oldVdom 老虚拟DOM
+ * @param newVdom 新虚拟DOM
+ */
+function updateElement(oldVdom, newVdom) {
+  if (typeof oldVdom.type === "string") {
+    // 是个原生节点 div
+    let currentDOM = (newVdom.dom = oldVdom.dom);
+    updateProps(currentDOM, oldVdom.props, newVdom.props);
+    // updateChildren(currentDOM, oldVdom.props.children, newVdom.props.children);
+  }
+}
 
 /**
  * 查找此虚拟DOM对应的真实DOM，类组件、函数组件、原生dom处理方式不一样
