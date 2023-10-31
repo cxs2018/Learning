@@ -21,10 +21,10 @@ export function createDOM(vdom) {
   } else if (typeof type === "function") {
     if (type.isReactComponent) {
       // 类组件
-      return mountClassComponent(vdom);
+      dom = mountClassComponent(vdom);
     } else {
       // 函数组件
-      return mountFunctionComponent(vdom);
+      dom = mountFunctionComponent(vdom);
     }
   } else {
     // 原生节点
@@ -167,7 +167,7 @@ function updateElement(oldVdom, newVdom) {
       newVdom.oldRenderVdom = oldVdom.oldRenderVdom;
       updateClassComponent(oldVdom, newVdom);
     } else {
-      // updateFunctionComponent(oldVdom, newVdom);
+      updateFunctionComponent(oldVdom, newVdom);
     }
   }
 }
@@ -184,6 +184,20 @@ function updateClassComponent(oldVdom, newVdom) {
     classInstance.componentWillReceiveProps();
   }
   classInstance.updater.emitUpdate(newVdom.props);
+}
+
+/**
+ * 新老虚拟dom都是函数组件
+ * @param oldVdom
+ * @param newVdom
+ */
+function updateFunctionComponent(oldVdom, newVdom) {
+  let parentDOM = findDOM(oldVdom).parentNode;
+  let { type, props } = newVdom;
+  let oldRenderVdom = oldVdom.oldRenderVdom;
+  let newRenderVdom = type(props);
+  newVdom.oldRenderVdom = newRenderVdom;
+  compareTwoVdom(parentDOM, oldRenderVdom, newRenderVdom);
 }
 
 /**
@@ -214,7 +228,15 @@ function updateChildren(parentDOM, oldVChildren, newVChildren) {
   newVChildren = Array.isArray(newVChildren) ? newVChildren : [newVChildren];
   let maxLength = Math.max(oldVChildren.length, newVChildren.length);
   for (let i = 0; i < maxLength; i++) {
-    compareTwoVdom(parentDOM, oldVChildren[i], newVChildren[i]);
+    let nextDOM = oldVChildren.find(
+      (item, index) => index > i && item && item.dom,
+    );
+    compareTwoVdom(
+      parentDOM,
+      oldVChildren[i],
+      newVChildren[i],
+      nextDOM && nextDOM.dom,
+    );
   }
 }
 

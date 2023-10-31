@@ -90,6 +90,7 @@ class Counter extends React.Component {
         <button onClick={this.handleClick}>
           <span>+</span>
         </button>
+        <ChildCounter2 count={this.state.number} />
       </div>
     );
   }
@@ -133,6 +134,10 @@ class ChildCounter extends React.Component {
     console.log("child render");
     return <div>{this.props.count}</div>;
   }
+}
+
+function ChildCounter2(props) {
+  return <div>{props.count}</div>;
 }
 
 // console.log("element", element, JSON.stringify(element, null, 2));

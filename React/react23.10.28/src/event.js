@@ -34,6 +34,7 @@ function dispatchEvent(event) {
     target = target.parentNode;
   }
   syntheicEvent = {};
+  updateQueue.isPending = false;
   updateQueue.batchUpdate();
 }
 
