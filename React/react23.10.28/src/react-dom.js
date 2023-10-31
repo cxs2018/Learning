@@ -129,12 +129,14 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom, nextDOM) {
     } else {
       parentDOM.appendChild(newDOM);
     }
+    newDOM.componentDidMount && newDOM.componentDidMount();
     return newVdom;
   } else if (oldVdom && newVdom && oldVdom.type !== newVdom.type) {
     // 新老dom都有，但是类型不一样
     let oldDOM = findDOM(oldVdom);
     let newDOM = findDOM(newVdom);
     parentDOM.replaceChild(newDOM, oldDOM);
+    newDOM.componentDidMount && newDOM.componentDidMount();
     if (oldVdom.classInstance && oldVdom.classInstance.componentWillUnmount) {
       oldVdom.classInstance.componentWillUnmount();
     }
