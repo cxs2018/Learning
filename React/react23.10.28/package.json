@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "react-scripts start --DISABLE_NEW_JSX_TRANSFORM=true",
-    "build": "set DISABLE_NEW_JSX_TRANSFORM=true & react-scripts build"
+    "start": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts start",
+    "build": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "jquery": "3.5.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",

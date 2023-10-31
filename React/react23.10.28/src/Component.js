@@ -36,6 +36,7 @@ class Updater {
    * @param newProps
    */
   emitUpdate(newProps) {
+    this.nextProps = newProps;
     if (updateQueue.isBatchingUpdate) {
       // 如果当前是批量更新模式，先缓存updater
       updateQueue.updaters.add(this);
@@ -46,9 +47,9 @@ class Updater {
   }
 
   updateClassComponent() {
-    let { classInstance, pendingStates, callbacks } = this;
+    let { classInstance, pendingStates, callbacks, nextProps } = this;
     if (pendingStates.length > 0) {
-      shouldUpdate(classInstance, this.getState(), callbacks);
+      shouldUpdate(classInstance, nextProps, this.getState(), callbacks);
     }
   }
 
@@ -127,10 +128,14 @@ function updateClassComponent(classInstance, newVdom) {
  * 判断组件是否需要更新
  * 不管组件UI要不要刷新，state一定要改变
  * @param classInstance
+ * @param nextProps
  * @param nextState
  * @param callbacks
  */
-function shouldUpdate(classInstance, nextState, callbacks) {
+function shouldUpdate(classInstance, nextProps, nextState, callbacks) {
+  if (nextProps) {
+    classInstance.props = nextProps;
+  }
   classInstance.state = nextState;
   if (
     classInstance.shouldComponentUpdate &&
