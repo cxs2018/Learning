@@ -7,11 +7,12 @@ import { compareTwoVdom, createDOM } from "./react-dom";
  */
 export let updateQueue = {
   isBatchingUpdate: false, // 当前是否处于批量更新模式，默认是false
-  updaters: new Set(),
+  updaters: [],
   batchUpdate() {
     for (let updater of this.updaters) {
       updater.updateClassComponent();
     }
+    this.updaters.length = 0;
     this.isBatchingUpdate = false;
   },
 };
@@ -39,7 +40,7 @@ class Updater {
     this.nextProps = newProps;
     if (updateQueue.isBatchingUpdate) {
       // 如果当前是批量更新模式，先缓存updater
-      updateQueue.updaters.add(this);
+      updateQueue.updaters.push(this);
     } else {
       // 不是批量更新，直接更新组件
       this.updateClassComponent();
@@ -88,9 +89,6 @@ class Component {
    * 强制更新组件UI
    */
   forceUpdate() {
-    if (this.componentWillUpdate) {
-      this.componentWillUpdate();
-    }
     let newRenderVdom = this.render();
     let oldRenderVdom = this.oldRenderVdom;
     let oldDOM = oldRenderVdom.dom;
@@ -133,23 +131,26 @@ function updateClassComponent(classInstance, newVdom) {
  * @param callbacks
  */
 function shouldUpdate(classInstance, nextProps, nextState, callbacks) {
+  let willUpdate = true;
+  if (
+    classInstance.shouldComponentUpdate &&
+    !classInstance.shouldComponentUpdate(nextProps, nextState)
+  ) {
+    // shouldComponentUpdate返回false，不触发组件更新
+    willUpdate = false;
+  }
+  if (willUpdate && classInstance.componentWillUpdate) {
+    classInstance.componentWillUpdate();
+  }
   if (nextProps) {
     classInstance.props = nextProps;
   }
   classInstance.state = nextState;
-  if (
-    classInstance.shouldComponentUpdate &&
-    !classInstance.shouldComponentUpdate(
-      classInstance.props,
-      classInstance.state,
-    )
-  ) {
-    // shouldComponentUpdate返回false，不触发组件更新
-    return;
+  if (willUpdate) {
+    classInstance.forceUpdate();
+    callbacks.forEach((cb) => cb.call(classInstance));
+    callbacks.length = 0;
   }
-  classInstance.forceUpdate();
-  callbacks.forEach((cb) => cb.call(classInstance));
-  callbacks.length = 0;
 }
 
 export default Component;
