@@ -50,11 +50,35 @@ function createContext() {
   return { Provider, Consumer };
 }
 
+function cloneElement(oldElement, newProps, ...newChildren) {
+  let children = oldElement.props.children;
+  // children可能是对象、undefined、数组
+  if (children) {
+    children = Array.isArray(children) ? children : [children];
+  } else {
+    children = [];
+  }
+  children.push(...newChildren);
+  // 再还原
+  if (children.length === 0) {
+    children = undefined;
+  } else if (children.length === 1) {
+    children = children[0];
+  }
+  newProps.children = children;
+  let props = { ...oldElement.props, ...newProps };
+  return {
+    ...oldElement,
+    props,
+  };
+}
+
 const React = {
   createElement,
   Component,
   createRef,
   createContext,
+  cloneElement,
 };
 
 export default React;

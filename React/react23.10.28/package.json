@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts start",
-    "build": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts build"
+    "build": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts build",
+    "cra-start":"cross-env DISABLE_NEW_JSX_TRANSFORM=true react-app-rewired start"
   },
   "keywords": [],
   "author": "",
@@ -29,5 +30,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.23.2",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.2.1"
   }
 }
