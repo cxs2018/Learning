@@ -1,4 +1,4 @@
-import { compareTwoVdom, createDOM } from "./react-dom";
+import { compareTwoVdom, createDOM, findDOM } from "./react-dom";
 
 /**
  * 批量更新
@@ -126,7 +126,7 @@ class Component {
   updateComponent() {
     let newRenderVdom = this.render();
     let oldRenderVdom = this.oldRenderVdom;
-    let oldDOM = oldRenderVdom.dom;
+    let oldDOM = findDOM(oldRenderVdom);
     let extraArgs =
       this.getSnapshotBeforeUpdate && this.getSnapshotBeforeUpdate();
     let currentRenderVdom = compareTwoVdom(

@@ -29,12 +29,13 @@ export function createDOM(vdom) {
   } else {
     // 原生节点
     dom = document.createElement(type);
-  }
-  updateProps(dom, {}, props);
-  if (typeof props.children === "object" && props.children.type) {
-    render(props.children, dom);
-  } else if (Array.isArray(props.children)) {
-    reconcileChildren(props.children, dom);
+    // 下面的操作，只在原生节点下做，因为类组件和函数组件会自己处理
+    updateProps(dom, {}, props);
+    if (typeof props.children === "object" && props.children.type) {
+      render(props.children, dom);
+    } else if (Array.isArray(props.children)) {
+      reconcileChildren(props.children, dom);
+    }
   }
   // 当根据一个vdom创建出来一个真实dom之后，把真实dom挂载到虚拟dom上
   vdom.dom = dom;
@@ -86,6 +87,9 @@ function mountFunctionComponent(vdom) {
 function mountClassComponent(vdom) {
   let { type, props } = vdom;
   let classInstance = new type(props);
+  if (type.contextType) {
+    classInstance.context = type.contextType.Provider._value;
+  }
   if (classInstance.componentWillMount) {
     classInstance.componentWillMount();
   }
@@ -220,7 +224,7 @@ function updateFunctionComponent(oldVdom, newVdom) {
  * 查找此虚拟DOM对应的真实DOM，类组件、函数组件、原生dom处理方式不一样
  * @param vdom
  */
-function findDOM(vdom) {
+export function findDOM(vdom) {
   let { type } = vdom;
   let dom;
   if (typeof type === "function") {
