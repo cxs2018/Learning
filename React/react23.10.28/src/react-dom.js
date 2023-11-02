@@ -86,6 +86,17 @@ function mountClassComponent(vdom) {
   if (classInstance.componentWillMount) {
     classInstance.componentWillMount();
   }
+  if (type.getDerivedStateFromProps) {
+    let partialState = type.getDerivedStateFromProps(
+      classInstance.props,
+      classInstance.state,
+    );
+    if (partialState) {
+      classInstance.state = { ...classInstance.state, ...partialState };
+    }
+  }
+  // 在实例上挂vdom属性，方便后续实例访问vdom，进而访问type，拿到类静态方法 getDerivedStateFromProps
+  classInstance.ownVdom = vdom;
   vdom.classInstance = classInstance;
   let renderVdom = classInstance.render();
   // 挂载到虚拟dom上

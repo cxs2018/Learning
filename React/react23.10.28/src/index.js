@@ -21,6 +21,7 @@ class Counter extends React.Component {
   }
 
   handleClick = () => {
+    // this.forceUpdate();
     this.setState({
       number: this.state.number + 1,
     });
@@ -68,7 +69,8 @@ class Counter extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     console.log("father shouldComponentUpdate", nextProps, nextState);
-    return nextState.number % 2 === 0;
+    // return nextState.number % 2 === 0;
+    return true;
   }
 
   componentWillUpdate() {
@@ -84,13 +86,14 @@ class Counter extends React.Component {
     return (
       <div>
         <p>{this.state.number}</p>
-        {this.state.number === 4 ? null : (
-          <ChildCounter count={this.state.number} />
-        )}
+        {/*{this.state.number === 4 ? null : (*/}
+        {/*  <ChildCounter count={this.state.number} />*/}
+        {/*)}*/}
         <button onClick={this.handleClick}>
           <span>+</span>
         </button>
-        <ChildCounter2 count={this.state.number} />
+        {/*<ChildCounter2 count={this.state.number} />*/}
+        <ChildCounter3 number={this.state.number} />
       </div>
     );
   }
@@ -101,6 +104,7 @@ class ChildCounter extends React.Component {
     super(props);
     console.log("child constructor");
   }
+
   componentWillMount() {
     console.log("child componentWillMount");
   }
@@ -138,6 +142,38 @@ class ChildCounter extends React.Component {
 
 function ChildCounter2(props) {
   return <div>{props.count}</div>;
+}
+
+class ChildCounter3 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { number: 0 };
+  }
+
+  /**
+   * props改变，改变自身state -> 类似之前写的props驱动state更新，在willUpdate里实现
+   * @param nextProps
+   * @param prevState
+   * @returns {{number: number}|null}
+   */
+  static getDerivedStateFromProps(nextProps, prevState) {
+    console.log("getDerivedStateFromProps", nextProps, prevState);
+    const { number } = nextProps;
+    // 当传入的type发生变化的时候，更新state
+    if (number === 0) {
+      return { number: 10 };
+    } else if (number % 2 === 0) {
+      return { number: number * 2 };
+    } else {
+      return { number: number * 3 };
+    }
+    // 否则，对于state不进行任何操作
+    return null;
+  }
+  render() {
+    console.log("child-render", this.state);
+    return <div>{this.state.number}</div>;
+  }
 }
 
 // console.log("element", element, JSON.stringify(element, null, 2));

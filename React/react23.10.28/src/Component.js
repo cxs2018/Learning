@@ -50,11 +50,16 @@ class Updater {
   updateClassComponent() {
     let { classInstance, pendingStates, callbacks, nextProps } = this;
     if (pendingStates.length > 0 || nextProps) {
-      shouldUpdate(classInstance, nextProps, this.getState(), callbacks);
+      shouldUpdate(
+        classInstance,
+        nextProps,
+        this.getState(nextProps),
+        callbacks,
+      );
     }
   }
 
-  getState() {
+  getState(nextProps) {
     let { classInstance, pendingStates, callbacks } = this;
     let { state } = classInstance;
     pendingStates.forEach((nextState) => {
@@ -64,6 +69,17 @@ class Updater {
       }
       state = { ...state, ...nextState };
     });
+    if (classInstance.ownVdom.type.getDerivedStateFromProps) {
+      // 或者使用 classInstance.constructor
+      let partialState = classInstance.ownVdom.type.getDerivedStateFromProps(
+        nextProps,
+        classInstance.state,
+      );
+      // TODO 这里暂时不支持函数
+      if (partialState) {
+        state = { ...state, ...partialState };
+      }
+    }
     pendingStates.length = 0;
     return state;
   }
@@ -86,9 +102,28 @@ class Component {
   }
 
   /**
-   * 强制更新组件UI
+   * 强行更新组件
    */
   forceUpdate() {
+    let nextState = this.state;
+    let nextProps = this.props;
+    if (this.constructor.getDerivedStateFromProps) {
+      let partialState = this.constructor.getDerivedStateFromProps(
+        nextProps,
+        nextState,
+      );
+      if (partialState) {
+        nextState = { ...nextState, ...partialState };
+      }
+    }
+    this.state = nextState;
+    this.updateComponent();
+  }
+
+  /**
+   * 更新组件UI
+   */
+  updateComponent() {
     let newRenderVdom = this.render();
     let oldRenderVdom = this.oldRenderVdom;
     let oldDOM = oldRenderVdom.dom;
@@ -142,12 +177,13 @@ function shouldUpdate(classInstance, nextProps, nextState, callbacks) {
   if (willUpdate && classInstance.componentWillUpdate) {
     classInstance.componentWillUpdate();
   }
+  // 先执行 shouldComponentUpdate、componentWillUpdate，保证方法内取到的是老state、老props，再更新state、props
   if (nextProps) {
     classInstance.props = nextProps;
   }
   classInstance.state = nextState;
   if (willUpdate) {
-    classInstance.forceUpdate();
+    classInstance.updateComponent();
     callbacks.forEach((cb) => cb.call(classInstance));
     callbacks.length = 0;
   }
