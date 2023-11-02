@@ -59,6 +59,7 @@ function cloneElement(oldElement, newProps, ...newChildren) {
     children = [];
   }
   children.push(...newChildren);
+  children = children.map(wrapToVdom);
   // 再还原
   if (children.length === 0) {
     children = undefined;
