@@ -127,6 +127,8 @@ class Component {
     let newRenderVdom = this.render();
     let oldRenderVdom = this.oldRenderVdom;
     let oldDOM = oldRenderVdom.dom;
+    let extraArgs =
+      this.getSnapshotBeforeUpdate && this.getSnapshotBeforeUpdate();
     let currentRenderVdom = compareTwoVdom(
       oldDOM.parentNode,
       oldRenderVdom,
@@ -134,7 +136,8 @@ class Component {
     );
     this.oldRenderVdom = currentRenderVdom;
     if (this.componentDidUpdate) {
-      this.componentDidUpdate();
+      // 这里应该传旧props、旧state
+      this.componentDidUpdate(this.props, this.state, extraArgs);
     }
   }
 }

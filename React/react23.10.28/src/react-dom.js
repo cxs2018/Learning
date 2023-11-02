@@ -13,7 +13,7 @@ function render(vdom, container) {
  * @returns {*|Text}
  */
 export function createDOM(vdom) {
-  let { type, props } = vdom;
+  let { type, props, ref } = vdom;
   let dom;
   if (type === REACT_TEXT) {
     // 文本节点
@@ -38,6 +38,9 @@ export function createDOM(vdom) {
   }
   // 当根据一个vdom创建出来一个真实dom之后，把真实dom挂载到虚拟dom上
   vdom.dom = dom;
+  if (ref) {
+    ref.current = dom;
+  }
   return dom;
 }
 

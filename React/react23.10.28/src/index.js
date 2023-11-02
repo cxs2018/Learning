@@ -178,4 +178,44 @@ class ChildCounter3 extends React.Component {
 
 // console.log("element", element, JSON.stringify(element, null, 2));
 
-ReactDOM.render(<Counter name="counter" />, document.getElementById("root"));
+let number = 0;
+
+class Counter2 extends React.Component {
+  state = { number: 0, list: [] };
+  ref = React.createRef();
+  getSnapshotBeforeUpdate() {
+    return this.ref.current.scrollHeight;
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshotData) {
+    console.log(
+      "componentDidUpdate",
+      prevProps,
+      prevState,
+      this.ref.current.scrollHeight - snapshotData,
+    );
+  }
+
+  handleClick = () => {
+    this.setState({
+      number: this.state.number + 1,
+      list: [...this.state.list, this.state.list.length],
+    });
+  };
+
+  render() {
+    return (
+      <div>
+        <p>{this.state.number}</p>
+        <button onClick={this.handleClick}>+</button>
+        <ul ref={this.ref}>
+          {this.state.list.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<Counter2 name="counter" />, document.getElementById("root"));

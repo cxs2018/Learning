@@ -8,9 +8,15 @@ import { wrapToVdom } from "./utils";
  * @returns {{type, props}}
  */
 function createElement(type, config, children) {
+  let ref;
+  let key;
   if (config) {
     delete config.__source;
     delete config.__self;
+    ref = config.ref;
+    delete config.ref;
+    key = config.key;
+    delete config.key;
   }
   let props = { ...config };
   if (arguments.length > 3) {
@@ -21,12 +27,21 @@ function createElement(type, config, children) {
   return {
     type,
     props,
+    ref,
+    key,
+  };
+}
+
+function createRef() {
+  return {
+    current: null,
   };
 }
 
 const React = {
   createElement,
   Component,
+  createRef,
 };
 
 export default React;
