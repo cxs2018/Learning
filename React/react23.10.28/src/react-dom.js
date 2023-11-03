@@ -119,7 +119,7 @@ function mountClassComponent(vdom) {
   // 在实例上挂vdom属性，方便后续实例访问vdom，进而访问type，拿到类静态方法 getDerivedStateFromProps
   classInstance.ownVdom = vdom;
   vdom.classInstance = classInstance;
-  let renderVdom = classInstance.mount();
+  let renderVdom = classInstance.render();
   // 挂载到虚拟dom上
   vdom.oldRenderVdom = renderVdom;
   // 组件实例this上也挂载下
@@ -280,14 +280,73 @@ function updateChildren(parentDOM, oldVChildren, newVChildren) {
  * 解决：Fiber，每个函数组件有自己的index和list，不会相互影响
  * @param initialState
  */
+// export function useState(initialState) {
+//   hookStates[hookIndex] =
+//     hookStates[hookIndex] ||
+//     (typeof initialState === "function" ? initialState() : initialState); // 惰性初始化
+//   let currentIndex = hookIndex;
+//   function setState(newState) {
+//     if (typeof newState === "function") {
+//       newState = newState(hookStates[currentIndex]);
+//     }
+//     hookStates[currentIndex] = newState;
+//     scheduleUpdate();
+//   }
+//   return [hookStates[hookIndex++], setState];
+// }
 export function useState(initialState) {
-  hookStates[hookIndex] = hookStates[hookIndex] || initialState;
+  return useReducer(null, initialState);
+}
+
+export function useMemo(factory, deps) {
+  if (hookStates[hookIndex]) {
+    let [lastMemo, lastDeps] = hookStates[hookIndex];
+    let same = deps.every((item, index) => item === lastDeps[index]);
+    if (same) {
+      hookIndex++;
+      return lastMemo;
+    } else {
+      let newMemo = factory();
+      hookStates[hookIndex++] = [newMemo, deps];
+      return newMemo;
+    }
+  } else {
+    let newMemo = factory();
+    hookStates[hookIndex++] = [newMemo, deps];
+    return newMemo;
+  }
+}
+export function useCallback(callback, deps) {
+  if (hookStates[hookIndex]) {
+    let [lastCallback, lastDeps] = hookStates[hookIndex];
+    let same = deps.every((item, index) => item === lastDeps[index]);
+    if (same) {
+      hookIndex++;
+      return lastCallback;
+    } else {
+      hookStates[hookIndex++] = [callback, deps];
+      return callback;
+    }
+  } else {
+    hookStates[hookIndex++] = [callback, deps];
+    return callback;
+  }
+}
+
+export function useReducer(reducer, initialState) {
+  hookStates[hookIndex] =
+    hookStates[hookIndex] ||
+    (typeof initialState === "function" ? initialState() : initialState); // 惰性初始化
   let currentIndex = hookIndex;
-  function setState(newState) {
-    hookStates[currentIndex] = newState;
+  function dispatch(action) {
+    hookStates[currentIndex] = reducer
+      ? reducer(hookStates[currentIndex], action)
+      : typeof action === "function"
+      ? action(hookStates[currentIndex])
+      : action;
     scheduleUpdate();
   }
-  return [hookStates[hookIndex++], setState];
+  return [hookStates[hookIndex++], dispatch];
 }
 
 const ReactDOM = {

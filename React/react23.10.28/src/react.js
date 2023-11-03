@@ -1,6 +1,6 @@
 import Component, { PureComponent } from "./Component";
 import { wrapToVdom } from "./utils";
-import { useState } from "./react-dom";
+import { useState, useCallback, useMemo, useReducer } from "./react-dom";
 
 /**
  * 创建虚拟DOM
@@ -76,6 +76,14 @@ function cloneElement(oldElement, newProps, ...newChildren) {
   };
 }
 
+function memo(FunctionComponent) {
+  return class extends PureComponent {
+    render() {
+      return FunctionComponent(this.props);
+    }
+  };
+}
+
 const React = {
   createElement,
   Component,
@@ -84,6 +92,10 @@ const React = {
   cloneElement,
   PureComponent,
   useState,
+  memo,
+  useCallback,
+  useMemo,
+  useReducer,
 };
 
 export default React;

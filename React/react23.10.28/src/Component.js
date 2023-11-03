@@ -228,6 +228,7 @@ function shadowEqual(obj1, obj2) {
       return false;
     }
   }
+  return true;
 }
 
 export default Component;
