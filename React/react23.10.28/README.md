@@ -16,3 +16,5 @@ React202012 zhufeng
 原因是，set DISABLE_NEW_JSX_TRANSFORM=true 没生效
 跨平台，用 cross-env 就解决了
 cross-env DISABLE_NEW_JSX_TRANSFORM=true
+
+React 17

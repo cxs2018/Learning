@@ -1,4 +1,4 @@
-import Component from "./Component";
+import Component, { PureComponent } from "./Component";
 import { wrapToVdom } from "./utils";
 /**
  * 创建虚拟DOM
@@ -80,6 +80,7 @@ const React = {
   createRef,
   createContext,
   cloneElement,
+  PureComponent,
 };
 
 export default React;
