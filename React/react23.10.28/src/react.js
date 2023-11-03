@@ -1,5 +1,7 @@
 import Component, { PureComponent } from "./Component";
 import { wrapToVdom } from "./utils";
+import { useState } from "./react-dom";
+
 /**
  * 创建虚拟DOM
  * @param type
@@ -81,6 +83,7 @@ const React = {
   createContext,
   cloneElement,
   PureComponent,
+  useState,
 };
 
 export default React;

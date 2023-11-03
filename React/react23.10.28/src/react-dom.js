@@ -1,7 +1,21 @@
 import { addEvent } from "./event";
 import { REACT_TEXT } from "./constants";
 
+// 存放状态的数组
+let hookStates = [];
+// 状态的索引
+let hookIndex = 0;
+let scheduleUpdate;
+
 function render(vdom, container) {
+  mount(vdom, container);
+  scheduleUpdate = () => {
+    hookIndex = 0;
+    compareTwoVdom(container, vdom, vdom);
+  };
+}
+
+function mount(vdom, container) {
   const dom = createDOM(vdom);
   container.appendChild(dom);
   dom.componentDidMount && dom.componentDidMount();
@@ -32,7 +46,7 @@ export function createDOM(vdom) {
     // 下面的操作，只在原生节点下做，因为类组件和函数组件会自己处理
     updateProps(dom, {}, props);
     if (typeof props.children === "object" && props.children.type) {
-      render(props.children, dom);
+      mount(props.children, dom);
     } else if (Array.isArray(props.children)) {
       reconcileChildren(props.children, dom);
     }
@@ -73,7 +87,7 @@ function updateProps(dom, oldProps, newProps) {
 function reconcileChildren(childrenVdom, parentDOM) {
   for (let i = 0; i < childrenVdom.length; i++) {
     let childVdom = childrenVdom[i];
-    render(childVdom, parentDOM);
+    mount(childVdom, parentDOM);
   }
 }
 
@@ -105,7 +119,7 @@ function mountClassComponent(vdom) {
   // 在实例上挂vdom属性，方便后续实例访问vdom，进而访问type，拿到类静态方法 getDerivedStateFromProps
   classInstance.ownVdom = vdom;
   vdom.classInstance = classInstance;
-  let renderVdom = classInstance.render();
+  let renderVdom = classInstance.mount();
   // 挂载到虚拟dom上
   vdom.oldRenderVdom = renderVdom;
   // 组件实例this上也挂载下
@@ -258,6 +272,22 @@ function updateChildren(parentDOM, oldVChildren, newVChildren) {
       nextDOM && nextDOM.dom,
     );
   }
+}
+
+/**
+ * 让函数组件可以使用状态
+ * 问题：函数组件卸载后，会影响后面的，因为当前的实现是所有函数组件共有一个索引和数组，当有组件卸载后，索引和数组却没修改
+ * 解决：Fiber，每个函数组件有自己的index和list，不会相互影响
+ * @param initialState
+ */
+export function useState(initialState) {
+  hookStates[hookIndex] = hookStates[hookIndex] || initialState;
+  let currentIndex = hookIndex;
+  function setState(newState) {
+    hookStates[currentIndex] = newState;
+    scheduleUpdate();
+  }
+  return [hookStates[hookIndex++], setState];
 }
 
 const ReactDOM = {
