@@ -102,7 +102,7 @@ function mountClassComponent(vdom) {
   let { type, props } = vdom;
   let classInstance = new type(props);
   if (type.contextType) {
-    classInstance.context = type.contextType.Provider._value;
+    classInstance.context = type.contextType._currentValue;
   }
   if (classInstance.componentWillMount) {
     classInstance.componentWillMount();
@@ -347,6 +347,10 @@ export function useReducer(reducer, initialState) {
     scheduleUpdate();
   }
   return [hookStates[hookIndex++], dispatch];
+}
+
+export function useContext(context) {
+  return context._currentValue;
 }
 
 const ReactDOM = {

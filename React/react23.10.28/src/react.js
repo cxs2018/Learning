@@ -1,6 +1,12 @@
 import Component, { PureComponent } from "./Component";
 import { wrapToVdom } from "./utils";
-import { useState, useCallback, useMemo, useReducer } from "./react-dom";
+import {
+  useState,
+  useCallback,
+  useMemo,
+  useReducer,
+  useContext,
+} from "./react-dom";
 
 /**
  * 创建虚拟DOM
@@ -40,16 +46,17 @@ function createRef() {
   };
 }
 
-function createContext() {
+function createContext(initialValue = {}) {
+  let context = { Provider, Consumer };
   function Provider(props) {
-    if (!Provider._value) Provider._value = {};
-    Object.assign(Provider._value, props.value);
+    context._currentValue = context._currentValue || initialValue;
+    Object.assign(context._currentValue, props.value);
     return props.children;
   }
   function Consumer(props) {
-    return props.children(Provider._value);
+    return props.children(context._currentValue);
   }
-  return { Provider, Consumer };
+  return context;
 }
 
 function cloneElement(oldElement, newProps, ...newChildren) {
@@ -96,6 +103,7 @@ const React = {
   useCallback,
   useMemo,
   useReducer,
+  useContext,
 };
 
 export default React;
