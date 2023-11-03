@@ -353,6 +353,55 @@ export function useContext(context) {
   return context._currentValue;
 }
 
+export function useEffect(callback, deps) {
+  if (hookStates[hookIndex]) {
+    let [destroyFunction, lastDeps] = hookStates[hookIndex];
+    let same = deps && deps.every((item, index) => item === lastDeps[index]);
+    if (same) {
+      hookIndex++;
+    } else {
+      destroyFunction && destroyFunction();
+      setTimeout(() => {
+        let destroyFunction = callback();
+        hookStates[hookIndex++] = [destroyFunction, deps];
+      });
+    }
+  } else {
+    // 第一次渲染
+    setTimeout(() => {
+      let destroyFunction = callback();
+      hookStates[hookIndex++] = [destroyFunction, deps];
+    });
+  }
+}
+
+export function useLayoutEffect(callback, deps) {
+  if (hookStates[hookIndex]) {
+    let [destroyFunction, lastDeps] = hookStates[hookIndex];
+    let same = deps && deps.every((item, index) => item === lastDeps[index]);
+    if (same) {
+      hookIndex++;
+    } else {
+      destroyFunction && destroyFunction();
+      queueMicrotask(() => {
+        let destroyFunction = callback();
+        hookStates[hookIndex++] = [destroyFunction, deps];
+      });
+    }
+  } else {
+    // 第一次渲染
+    queueMicrotask(() => {
+      let destroyFunction = callback();
+      hookStates[hookIndex++] = [destroyFunction, deps];
+    });
+  }
+}
+
+export function useRef(initialState) {
+  hookStates[hookIndex] = hookStates[hookIndex] || { current: initialState };
+  return hookStates[hookIndex++];
+}
+
 const ReactDOM = {
   render,
 };

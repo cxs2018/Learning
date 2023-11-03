@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts start",
     "build": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-scripts build",
-    "cra-start":"cross-env DISABLE_NEW_JSX_TRANSFORM=true react-app-rewired start"
+    "cra-start": "cross-env DISABLE_NEW_JSX_TRANSFORM=true react-app-rewired start"
   },
   "keywords": [],
   "author": "",

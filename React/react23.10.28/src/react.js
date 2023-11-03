@@ -6,6 +6,9 @@ import {
   useMemo,
   useReducer,
   useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
 } from "./react-dom";
 
 /**
@@ -104,6 +107,9 @@ const React = {
   useMemo,
   useReducer,
   useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
 };
 
 export default React;
