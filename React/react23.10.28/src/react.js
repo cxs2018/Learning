@@ -94,6 +94,18 @@ function memo(FunctionComponent) {
   };
 }
 
+function forwardRef(FunctionComponent) {
+  return class extends Component {
+    render() {
+      return FunctionComponent(this.props, this.ref);
+    }
+  };
+}
+
+function useImperativeHandle(ref, factory) {
+  ref.current = factory();
+}
+
 const React = {
   createElement,
   Component,
@@ -110,6 +122,8 @@ const React = {
   useEffect,
   useLayoutEffect,
   useRef,
+  forwardRef,
+  useImperativeHandle,
 };
 
 export default React;

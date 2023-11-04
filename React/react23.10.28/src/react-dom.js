@@ -53,7 +53,8 @@ export function createDOM(vdom) {
   }
   // 当根据一个vdom创建出来一个真实dom之后，把真实dom挂载到虚拟dom上
   vdom.dom = dom;
-  if (ref) {
+  if (ref && typeof type !== "function") {
+    // 给原生dom节点出创造ref
     ref.current = dom;
   }
   return dom;
@@ -99,10 +100,14 @@ function mountFunctionComponent(vdom) {
 }
 
 function mountClassComponent(vdom) {
-  let { type, props } = vdom;
+  let { type, props, ref } = vdom;
   let classInstance = new type(props);
   if (type.contextType) {
     classInstance.context = type.contextType._currentValue;
+  }
+  if (ref) {
+    ref.current = classInstance;
+    classInstance.ref = ref;
   }
   if (classInstance.componentWillMount) {
     classInstance.componentWillMount();
@@ -152,6 +157,11 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom, nextDOM) {
     if (oldVdom.classInstance && oldVdom.classInstance.componentWillUnmount) {
       oldVdom.classInstance.componentWillUnmount();
     }
+    // 当函数组件销毁的时候，如果提供了useEffect返回值，执行销毁函数
+    if (hookStates[hookIndex]) {
+      let [destroyFunction] = hookStates[hookIndex];
+      destroyFunction && destroyFunction();
+    }
     return null;
   } else if (newVdom && !oldVdom) {
     // 新的有，老的没有 -> 新建新的
@@ -171,6 +181,11 @@ export function compareTwoVdom(parentDOM, oldVdom, newVdom, nextDOM) {
     newDOM.componentDidMount && newDOM.componentDidMount();
     if (oldVdom.classInstance && oldVdom.classInstance.componentWillUnmount) {
       oldVdom.classInstance.componentWillUnmount();
+    }
+    // 当函数组件销毁的时候，如果提供了useEffect返回值，执行销毁函数
+    if (hookStates[hookIndex]) {
+      let [destroyFunction] = hookStates[hookIndex];
+      destroyFunction && destroyFunction();
     }
   } else {
     // 新老dom都有，且类型一致，进行深度比较，需要更新自己的属性、深度比较儿子们

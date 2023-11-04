@@ -1,22 +1,28 @@
 import React from "./react";
 import ReactDOM from "./react-dom";
 
-// function CounterA() {
-//   const [number, setNumber] = React.useState(0);
-//   const [number2, setNumber2] = React.useState(() => 20);
-//   let handleClick = () => {
-//     setNumber(number + 1);
-//     setNumber2((number) => number + 10);
-//   };
-//   return (
-//     <div>
-//       <p>
-//         {number}-{number2}
-//       </p>
-//       <button onClick={handleClick}>+</button>
-//     </div>
-//   );
-// }
+function CounterA() {
+  const [number, setNumber] = React.useState(0);
+  const [number2, setNumber2] = React.useState(() => 20);
+  let handleClick = () => {
+    setNumber(number + 1);
+    setNumber2((number) => number + 10);
+  };
+  React.useEffect(() => {
+    console.log("CounterA DidMount");
+    return () => {
+      console.log("CounterA WillUnmount");
+    };
+  }, []);
+  return (
+    <div>
+      <p>
+        {number}-{number2}
+      </p>
+      <button onClick={handleClick}>+</button>
+    </div>
+  );
+}
 //
 // function CounterB() {
 //   const [number, setNumber] = React.useState(0);
@@ -109,19 +115,61 @@ import ReactDOM from "./react-dom";
 //   return <p>{number}</p>;
 // }
 
-const App = () => {
-  const ref = React.useRef();
-  React.useLayoutEffect(() => {
-    ref.current.style.transform = `translate(500px)`; //TODO
-    ref.current.style.transition = `all 500ms`;
-  });
-  let style = {
-    width: "100px",
-    height: "100px",
-    borderRadius: "50%",
-    backgroundColor: "red",
-  };
-  return <div style={style} ref={ref}></div>;
-};
+// const App = () => {
+//   const ref = React.useRef();
+//   React.useLayoutEffect(() => {
+//     ref.current.style.transform = `translate(500px)`; //TODO
+//     ref.current.style.transition = `all 500ms`;
+//   });
+//   let style = {
+//     width: "100px",
+//     height: "100px",
+//     borderRadius: "50%",
+//     backgroundColor: "red",
+//   };
+//   return <div style={style} ref={ref}></div>;
+// };
+
+function Child(props, ref) {
+  const inputRef = React.useRef();
+  React.useImperativeHandle(ref, () => ({
+    focus() {
+      inputRef.current.focus();
+    },
+    set value(v) {
+      inputRef.current.value = v;
+    },
+  }));
+  return (
+    <div>
+      <input type="text" ref={inputRef} />
+    </div>
+  );
+}
+const ForwardChild = React.forwardRef(Child);
+function App() {
+  let [number, setNumber] = React.useState(0);
+  const inputRef = React.useRef();
+  function getFocus() {
+    console.log(inputRef.current);
+    inputRef.current.value = "focus";
+    inputRef.current.focus();
+  }
+  return (
+    <div>
+      {/*<ForwardChild ref={inputRef} />*/}
+      <CounterA />
+      <button onClick={getFocus}>获得焦点</button>
+      <p>{number}</p>
+      <button
+        onClick={() => {
+          setNumber(number + 1);
+        }}
+      >
+        +
+      </button>
+    </div>
+  );
+}
 
 ReactDOM.render(<App />, document.getElementById("root"));
