@@ -5,7 +5,7 @@ React202012 zhufeng
 课里面的版本
 "react": "17.0.1",
 "react-dom": "17.0.1",
-"react-scripts": "4.0.1"
+"react-scripts": "4.0.1"·
 
 遇到了个问题，不知道为啥不走自己写的React.createElement
 修复，可使用旧版react，使用老的jsx编译方式
