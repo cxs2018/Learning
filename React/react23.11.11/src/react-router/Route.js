@@ -6,7 +6,7 @@ class Route extends React.Component {
   render() {
     const { history, location } = this.context;
     const { exact, path, component: RouteComponent } = this.props;
-    const match = location.location.pathname === path;
+    const match = history.location.pathname === path;
     let renderElement = null;
     let routeProps = { history, location, match };
     if (match) {
