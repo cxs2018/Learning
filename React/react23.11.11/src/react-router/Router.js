@@ -1,5 +1,5 @@
 import React from "react";
-import ReactContext from "./ReactContext";
+import RouterContext from "./ReactContext";
 
 class Router extends React.Component {
   constructor(props) {
@@ -24,9 +24,9 @@ class Router extends React.Component {
       history: this.props.history,
     };
     return (
-      <ReactContext.Provider value={value}>
+      <RouterContext.Provider value={value}>
         {this.props.children}
-      </ReactContext.Provider>
+      </RouterContext.Provider>
     );
   }
 }
