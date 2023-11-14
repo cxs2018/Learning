@@ -8,8 +8,8 @@ import Home from "./components/Home";
 function App() {
   return (
     <BrowserRouter>
-      <Route exact path="/" component={Home} />
-      <Route path="/user" component={User} />
+      <Route exact={false} path="/" component={Home} />
+      <Route path="/user/:id/:name" component={User} />
       <Route path="/profile" component={Profile} />
     </BrowserRouter>
   );

@@ -14,6 +14,10 @@ class Router extends React.Component {
     });
   }
 
+  static computeRootMatch(pathname) {
+    return { path: "/", url: "/", isExact: pathname === "/", params: {} };
+  }
+
   componentWillUnmount() {
     this.unlisten();
   }
@@ -22,6 +26,7 @@ class Router extends React.Component {
     let value = {
       location: this.state.location,
       history: this.props.history,
+      match: Router.computeRootMatch(this.state.location.pathname),
     };
     return (
       <RouterContext.Provider value={value}>

@@ -1,5 +1,5 @@
 function User(props) {
-  console.log("user props", props.location.state);
+  console.log("user props", props);
   return (
     <div>
       User

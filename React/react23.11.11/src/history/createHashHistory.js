@@ -16,11 +16,23 @@ function createHashHistory() {
     Object.assign(history, { action, location: { pathname, state } });
     if (!action || action === "PUSH") {
       historyStack[++historyIndex] = history.location;
+    } else if (action === "REPLACE") {
+      historyStack[historyIndex] = history.location;
     }
     listeners.forEach((listener) => listener(history.location));
   });
   function push(pathname, nextState) {
     action = "PUSH";
+    if (typeof pathname === "object") {
+      state = pathname.state;
+      pathname = pathname.pathname;
+    } else {
+      state = nextState;
+    }
+    window.location.hash = pathname;
+  }
+  function replace(pathname, nextState) {
+    action = "REPLACE";
     if (typeof pathname === "object") {
       state = pathname.state;
       pathname = pathname.pathname;
@@ -53,6 +65,7 @@ function createHashHistory() {
     goForward,
     listen,
     push,
+    replace,
   };
   action = "PUSH";
   window.location.hash = window.location.hash

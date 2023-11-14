@@ -42,3 +42,25 @@ console.log("1a".match(/\d(?![A-Z])[a-z]/));
 console.log("a1a".match(/(?<=[a-z])\d[a-z]/));
 // 反向否定后顾，左边不能跟着什么，不捕获
 console.log("a1a".match(/(?<![A-Z])\d[a-z]/));
+
+{
+  console.log("--------------------------------------------last");
+  let { pathToRegexp } = require("path-to-regexp");
+  let keys = [];
+  let regexp = pathToRegexp("/user/:id/:name", keys, {
+    end: true,
+    sensitive: true,
+    strict: false,
+  });
+  let result = "/user/100/zhufeng".match(regexp);
+  console.log(result);
+  let paramNames = keys.map((key) => key.name);
+  console.log(paramNames);
+  let values = result.slice(1);
+  let params = paramNames.reduce((memo, key, index) => {
+    memo[key] = values[index];
+    return memo;
+  }, {});
+  console.log(params);
+  //match.params {id:100,name:'zhufeng'};
+}
