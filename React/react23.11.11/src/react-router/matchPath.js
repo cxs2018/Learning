@@ -1,9 +1,14 @@
 import { pathToRegexp } from "path-to-regexp";
 
+const cache = {};
 function compilePath(path, options) {
+  const cacheKey = path + JSON.stringify(options);
+  if (cache[cacheKey]) return cache[cacheKey];
   const keys = [];
   const regexp = pathToRegexp(path, keys, options);
-  return { keys, regexp };
+  const result = { keys, regexp };
+  cache[cacheKey] = result;
+  return result;
 }
 
 /**
