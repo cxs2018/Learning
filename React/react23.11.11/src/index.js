@@ -11,6 +11,8 @@ import {
 import Profile from "./components/Profile";
 import User from "./components/User";
 import Home from "./components/Home";
+import Login from "./components/Login";
+import Protected from "./components/Protected";
 
 function App() {
   return (
@@ -35,7 +37,8 @@ function App() {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/user" component={User} />
-        <Route path="/profile" component={Profile} />
+        <Protected path="/profile" component={Profile} />
+        <Route path="/login" component={Login} />
         <Redirect to="/" />
       </Switch>
     </HashRouter>
