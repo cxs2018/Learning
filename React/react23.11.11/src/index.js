@@ -14,7 +14,7 @@ import Home from "./components/Home";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ul>
         <li>
           <button>
@@ -23,7 +23,7 @@ function App() {
         </li>
         <li>
           <button>
-            <Link to="/user/200/hello">用户管理</Link>
+            <Link to="/user">用户管理</Link>
           </button>
         </li>
         <li>
@@ -34,11 +34,11 @@ function App() {
       </ul>
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route path="/user/:id/:name" component={User} />
+        <Route path="/user" component={User} />
         <Route path="/profile" component={Profile} />
         <Redirect to="/" />
       </Switch>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
