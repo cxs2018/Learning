@@ -18,6 +18,8 @@ class Route extends React.Component {
     let renderElement = null;
     let routeProps = { history, location, match };
     if (match) {
+      // 更新 context 中的 match 属性
+      this.context.match = match;
       if (RouteComponent) {
         renderElement = <RouteComponent {...routeProps} />;
       } else if (render) {

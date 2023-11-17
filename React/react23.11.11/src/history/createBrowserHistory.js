@@ -3,6 +3,7 @@ function createBrowserHistory() {
   let action;
   let state;
   let listeners = [];
+  let message;
   (function (history) {
     let oldPushState = history.pushState;
     history.pushState = function (pathname, _, state) {
@@ -32,6 +33,11 @@ function createBrowserHistory() {
       pathname = pathname.pathname;
     } else {
       state = nextState;
+    }
+    if (message) {
+      let showMessage = message({ pathname });
+      let allow = confirm(showMessage);
+      if (!allow) return;
     }
     globalHistory.pushState(state, null, pathname);
     let location = { state, pathname };
@@ -63,6 +69,10 @@ function createBrowserHistory() {
       },
     });
   };
+  function block(newMessage) {
+    message = newMessage;
+    return () => (message = null);
+  }
   const history = {
     action: "POP",
     location: {
@@ -74,8 +84,8 @@ function createBrowserHistory() {
     goForward,
     listen,
     push,
+    block,
   };
-  console.log("constructor");
   return history;
 }
 
