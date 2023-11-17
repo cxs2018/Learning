@@ -6,7 +6,12 @@ class Route extends React.Component {
   static contextType = RouterContext;
   render() {
     const { history, location } = this.context;
-    const { component: RouteComponent, computedMatch, render } = this.props;
+    const {
+      component: RouteComponent,
+      computedMatch,
+      render,
+      children,
+    } = this.props;
     const match = computedMatch
       ? computedMatch
       : matchPath(location.pathname, this.props);
@@ -17,7 +22,12 @@ class Route extends React.Component {
         renderElement = <RouteComponent {...routeProps} />;
       } else if (render) {
         renderElement = render(routeProps);
-        console.log("renderElement", renderElement);
+      } else if (children) {
+        renderElement = children(routeProps);
+      }
+    } else {
+      if (children) {
+        renderElement = children(routeProps);
       }
     }
     return renderElement;

@@ -7,6 +7,7 @@ import {
   Switch,
   Link,
   Redirect,
+  NavLink,
 } from "./react-router-dom";
 import Profile from "./components/Profile";
 import User from "./components/User";
@@ -19,19 +20,25 @@ function App() {
     <HashRouter>
       <ul>
         <li>
-          <button>
-            <Link to="/">首页</Link>
-          </button>
+          <NavLink
+            className="strong"
+            style={{ textDecoration: "line-through" }}
+            activeStyle={{ color: "red" }}
+            to="/"
+            exact
+          >
+            Home
+          </NavLink>
         </li>
         <li>
-          <button>
-            <Link to="/user">用户管理</Link>
-          </button>
+          <NavLink activeStyle={{ color: "red" }} to="/user">
+            User
+          </NavLink>
         </li>
         <li>
-          <button>
-            <Link to="/profile">个人中心</Link>
-          </button>
+          <NavLink activeStyle={{ color: "red" }} to="/profile">
+            Profile
+          </NavLink>
         </li>
       </ul>
       <Switch>
