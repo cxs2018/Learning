@@ -17,7 +17,7 @@ const createStore = (reducer, preloadedState) => {
       listeners.splice(index, 1);
     };
   }
-  dispatch({ type: "INIT" });
+  dispatch({ type: "@@REDUX/INIT" });
   return {
     getState,
     dispatch,
