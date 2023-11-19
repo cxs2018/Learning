@@ -8,8 +8,18 @@ function connect(mapStateToProps, mapDispatchToProps) {
       const { store } = React.useContext(ReactReduxContext);
       const { getState, dispatch, subscribe } = store;
       const prevState = getState(); // 获取仓库中的总状态
-      const stateProps = mapStateToProps(prevState);
-      let dispatchProps = bindActionCreators(mapDispatchToProps, dispatch);
+      const stateProps = React.useMemo(mapStateToProps(prevState), [prevState]);
+      let dispatchProps = React.useMemo(() => {
+        let dispatchProps;
+        if (typeof mapDispatchToProps === "object") {
+          dispatchProps = bindActionCreators(mapDispatchToProps, dispatch);
+        } else if (typeof mapDispatchToProps === "function") {
+          dispatchProps = mapDispatchToProps(dispatch);
+        } else {
+          dispatchProps = { dispatch: dispatch };
+        }
+        return dispatchProps;
+      }, [store]);
       const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
       React.useEffect(() => {
         return subscribe(forceUpdate);
