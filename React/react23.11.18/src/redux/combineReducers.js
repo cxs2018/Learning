@@ -4,7 +4,7 @@
  * @returns {function({}=, *): {}}
  * @constructor
  */
-function CombineReducer(reducers) {
+function combineReducers(reducers) {
   return function (state = {}, action) {
     let nextState = {};
     for (const key in reducers) {
@@ -14,4 +14,4 @@ function CombineReducer(reducers) {
   };
 }
 
-export default CombineReducer;
+export default combineReducers;
