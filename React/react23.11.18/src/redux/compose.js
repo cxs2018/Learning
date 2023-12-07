@@ -17,6 +17,14 @@ function compose1(...funcs) {
   };
 }
 
+function compose2(...funcs) {
+  return function (args) {
+    return funcs.reduceRight((args, fn) => {
+      return fn(args);
+    }, args);
+  };
+}
+
 function compose(...funcs) {
   return funcs.reduce(
     (a, b) =>
@@ -52,6 +60,9 @@ function compose(...funcs) {
 
   let chain = [promise, thunk, logger];
   let composed = compose(...chain);
+  /**
+   * promise(thunk(logger(dispatch)))
+   */
   let dispatch = () => {
     console.log("原始的dispatch");
   };

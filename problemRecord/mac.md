@@ -42,3 +42,7 @@ keystore -list -v -keystore ./my-release-key.keystore
 nvm ls
 nvm alias default vX.X.X
 nvm use 默认的版本 才会全局生效
+
+## mac端口占用
+1. 查找被占用的端口 lsof -i:8081
+2. 干掉占用的服务 kill PID
