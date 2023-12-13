@@ -60,6 +60,16 @@ function debounce(fn, delay = 200, leading) {
 }
 ```
 
+### 变量、作用域、垃圾回收
+
+https://fz0byxwkki.feishu.cn/docx/Ly6BdRgdIoyMeOxlQfSctLpMnIh
+
+ECMAScript 中所有函数的参数都是按值传递的。变量有按值和按引用访问，而传参只有按值传递。
+
+函数参数传递的两种方式：
+按值传递：值会被复制到一个局部变量（即一个命名参数，或者用 ECMAScript 的话说，就是 arguments 对象中的一个槽位）。
+按引用传递：值在内存中的位置会被保存在一个局部变量中，这意味着对本地变量的修改会反映到函数外部。
+
 ### JS的各种数据类型
 
 ### Map和WeakMap
