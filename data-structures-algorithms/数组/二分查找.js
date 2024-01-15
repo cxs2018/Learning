@@ -32,8 +32,8 @@ function search2(nums, target) {
   let left = 0;
   let right = nums.length; // 定义target在左闭右开的区间里，[left,right)
   while (left < right) {
-    // 当left===right，区间[left,right]依然有效，所以用<=
-    let middle = left + ((right - left) >> 2); // 防止大数溢出，等同于 (left + right) / 2
+    // 当left===right，区间[left,right) 无效，所以用 <
+    let middle = left + ((right - left) >> 1); // 防止大数溢出，等同于 (left + right) / 2
     if (nums[middle] > target) {
       right = middle; // target 在左区间，所以 [left,middle)
     } else if (nums[middle] < target) {
