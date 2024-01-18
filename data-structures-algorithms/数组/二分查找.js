@@ -53,3 +53,27 @@ function search2(nums, target) {
  * 2. 位运算，向下取整
  * 3. 防止大数溢出 (right + left) / 2 => left + (right - left) / 2
  */
+
+{
+  /**
+   * 二分查找，递增有序数组大于等于某个数
+   */
+  function search(nums, target) {
+    let left = 0,
+      right = nums.length - 1;
+    while (left <= right) {
+      let mid = left + ((right - left) >> 1);
+      console.log(
+        `当前索引 [left ${left}, ${nums[left]}] [right ${right}, ${nums[right]}] [mid ${mid}, ${nums[mid]}]`,
+      );
+      if (nums[mid] < target) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+    return [left, nums[left]];
+  }
+
+  console.log(search([10, 21, 34, 46, 58, 73, 81, 95], 11));
+}

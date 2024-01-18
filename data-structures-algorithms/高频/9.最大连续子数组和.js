@@ -54,3 +54,59 @@ var maxSubArray = function (nums) {
     return getInfo(nums, 0, nums.length - 1).mSum;
   };
 }
+
+// 扩展 LIS 最长上升子序列
+/**
+ * https://leetcode.cn/problems/longest-increasing-subsequence/description/
+ */
+/**
+ * dp[i] 表示以第 i 个数字结尾的最长上升子序列的长度
+ * @param {number[]} nums
+ * @return {number}
+ */
+var lengthOfLIS = function (nums) {
+  const n = nums.length;
+  const dp = new Array(n).fill(1);
+  let max = dp[0];
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < i; j++) {
+      if (nums[j] < nums[i]) {
+        dp[i] = Math.max(dp[j] + 1, dp[i]);
+      }
+    }
+    max = Math.max(max, dp[i]);
+  }
+  return max;
+};
+
+{
+  /**
+   * 贪心+二分查找
+   * 使上升序列尽可能地长 => 序列上升的尽可能慢 => 每次上升子序列最后加上的那个数尽可能小
+   * d[i] 表示长度为 i 的最长上升子序列的末尾元素的最小值，用 len 记录目前最长子序列的长度，初始时 len 为 1，d[1] = nums[0]
+   */
+  var lengthOfLIS = function (nums) {
+    const n = nums.length;
+    const d = new Array(n + 1);
+    let len = 1;
+    d[len] = nums[0];
+    for (let i = 0; i < n; i++) {
+      if (nums[i] > d[len]) {
+        d[++len] = nums[i];
+      } else {
+        let l = 1,
+          r = len;
+        while (l <= r) {
+          const mid = (l + r) >> 1;
+          if (d[mid] < nums[i]) {
+            l = mid + 1;
+          } else {
+            r = mid - 1;
+          }
+        }
+        d[l] = nums[i];
+      }
+    }
+    return len;
+  };
+}
