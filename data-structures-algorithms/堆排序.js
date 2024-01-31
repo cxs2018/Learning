@@ -81,3 +81,86 @@ const a = [
 ];
 heapSort(a);
 console.log(a);
+
+{
+  /**
+   * 升序，大顶堆（大根堆）
+   * @param arr
+   */
+  function heapSort(arr) {
+    function swap(arr, i, j) {
+      let temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+    }
+    function adjustHeap(arr, i, length) {
+      let temp = arr[i]; // 先取出当前元素 i
+      for (let k = i * 2 + 1; k < length; k = k * 2 + 1) {
+        // 从左子节点开始遍历
+        if (k + 1 < length && arr[k] < arr[k + 1]) {
+          // 右子节点比左子节点更大
+          k++;
+        }
+        if (arr[k] > temp) {
+          // 子节点比当前节点大，要交换了
+          arr[i] = arr[k]; // 将子节点的值赋值给当前节点
+          i = k; // 将子节点作为当前节点，继续调整
+        } else {
+          break;
+        }
+      }
+      arr[i] = temp; // 将最初的节点值赋值到子节点
+    }
+    // 建堆
+    for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+      // 从最后一个非叶子节点开始，从右到左，从下到上调整堆
+      adjustHeap(arr, i, arr.length);
+    }
+    for (let i = arr.length - 1; i >= 0; i--) {
+      swap(arr, 0, i); // 交换堆顶元素和最后一个元素
+      adjustHeap(arr, 0, i); // 调整堆
+    }
+  }
+  const arr = [9, 8, 7, 6, 5, 4, 3, 2, 1];
+  heapSort(arr);
+  console.log("version2", arr);
+}
+
+{
+  /**
+   * 降序，小顶堆（小根堆）
+   * @param arr
+   */
+  function heapSort(arr) {
+    function swap(arr, i, j) {
+      let temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+    }
+    function adjustHeap(arr, i, length) {
+      let temp = arr[i];
+      for (let k = i * 2 + 1; k < length; k = k * 2 + 1) {
+        if (k + 1 < length && arr[k] > arr[k + 1]) {
+          k++;
+        }
+        if (temp < arr[k]) {
+          break;
+        } else {
+          arr[i] = arr[k];
+          i = k;
+        }
+      }
+      arr[i] = temp;
+    }
+    for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
+      adjustHeap(arr, i, arr.length);
+    }
+    for (let i = arr.length - 1; i >= 0; i--) {
+      swap(arr, 0, i);
+      adjustHeap(arr, 0, i);
+    }
+  }
+  const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  heapSort(arr);
+  console.log("降序", arr);
+}
