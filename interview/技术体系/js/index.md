@@ -80,6 +80,44 @@ Let声明到底会不会被提升？https://juejin.cn/post/7054205477571264549
 
 ### JS的各种数据类型
 
+7个基本数据类型，boolean/number/string/undefined/null/symbol/object/bigint(ES2020)
+typeof 可以判断 function，null会被识别为object
+instanceof 判断对象是否是构造函数的实例，原理是判断对象的原型链上是否存在构造函数的原型对象
+
+### 继承
+原型链继承：Child.prototype = new Parent()
+构造函数继承: function Child() { Parent.call(this) }
+组合继承:
+```js
+function Parent(name) {
+  this.name = name;
+}
+function Child(name, age) {
+  Parent.call(this, name);
+  this.age = age;
+}
+Child.prototype = new Parent();
+Child.prototype.constructor = Child;
+```
+原型式继承：基于已有的对象来创建新的对象，使用 Object.create 方法
+寄生式继承：对原型式继承获得的对象，再进行扩展
+寄生组合式继承：
+```js
+function Child(name, age) {
+  Parent.call(this, name); // 调用 Parent()
+  this.age = age;
+}
+
+function inherit(Child, Parent) {
+  // 这里改用 Object.create 就可以减少组合继承中多进行一次构造的过程
+  Child.prototype = Object.create(Parent.prototype);
+  Child.prototype.constructor = Child; // 手动挂上构造器，指向自己的构造函数
+}
+
+```
+
+### Object.create、new
+
 ### Map和WeakMap
 
 ### 数组的方法
@@ -107,3 +145,5 @@ setTimeout
 ### JS 0.1 + 0.2 !== 0.3 为什么？单双精度
 
 ### Object.defineProperty Proxy
+
+### call、apply、bind
