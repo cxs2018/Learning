@@ -6,19 +6,17 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="./dist/vue.js"></script>
-    <script>
-			let vm = new Vue({
-				el: "#app",
-				data: {
-					name: "hello, vue",
-				}
-			})
-            console.log(vm)
-
-    </script>
 </head>
 <body>
-<div id="app">{{name}}}</div>
+<div id="app" a="1"  >{{name}}}  </div>
+<script src="./dist/vue.js"></script>
+<script>
+  let vm = new Vue({
+    el: "#app",
+    data: {
+      arr: [{name: 1}],
+    }
+  })
+</script>
 </body>
 </html>
