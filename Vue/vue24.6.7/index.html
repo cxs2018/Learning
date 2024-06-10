@@ -8,16 +8,15 @@
     <title>Document</title>
 </head>
 <body>
-<div id="app" a="1"  style="color:red;background:green">
-    <ul>
-        <li>cxs {{name}} 242424 {{title}} hshsh</li>
-    </ul></div>
+<div id="app" a="1" style="color:red;background:green">
+    hello {{name}} world
+</div>
 <script src="./dist/vue.js"></script>
 <script>
   let vm = new Vue({
     el: "#app",
     data: {
-      arr: [{name: 1}],
+      name:{title:"name"},
     }
   })
 </script>
