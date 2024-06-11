@@ -9,7 +9,7 @@ export function renderMixin(Vue) {
   };
   Vue.prototype._s = function (val) {
     if (typeof val === "object") {
-      return JSON.stringify(val);
+      return JSON.stringify(val); // 取值了，会进行依赖收集
     }
     return val;
   };

@@ -9,22 +9,20 @@
 </head>
 <body>
 <div id="app" >
-    hello {{name}} world {{age}} {{name}}
+    {{obj}}
 </div>
 <script src="./dist/vue.js"></script>
 <script>
   let vm = new Vue({
     el: "#app",
     data: {
-      name: "-Vue-",
-      age: "-React-"
+      obj: {a:{a:1}} // JSON.stringify 会取值，进行依赖收集
     }
   })
   // 数据变化需要影响视图，视图和数据绑定
   setTimeout(() => {
-	  vm.name = "Hello"
-    vm.age = "Angular"
-  }, 2000)
+		vm.obj.a.a = 2
+  },2000)
 </script>
 </body>
 </html>

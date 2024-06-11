@@ -5,6 +5,7 @@ import Dep from "./dep";
 // 检查数据类型，类有类型 普通对象无类型（Object除外）
 class Observer {
   constructor(data) {
+    this.dep = new Dep();
     // 所有被劫持过的属性都有 __ob__
     Object.defineProperty(data, "__ob__", {
       value: this,
@@ -34,15 +35,31 @@ class Observer {
   }
 }
 
+function dependArray(value) {
+  for (let i = 0; i < value.length; i++) {
+    let current = value[i];
+    current.__ob__ && current.__ob__.dep.depend();
+    if (Array.isArray(current)) {
+      dependArray(current);
+    }
+  }
+}
+
 // vue2会对对象进行遍历，将每个属性用 Object.defineProperty 重新定义 性能差
 function defineReactive(data, key, value) {
   // 递归处理对象
-  observer(value);
+  let childOb = observer(value);
   let dep = new Dep();
   Object.defineProperty(data, key, {
     get() {
       if (Dep.target) {
         dep.depend();
+        if (childOb) {
+          childOb.dep.depend();
+          if (Array.isArray(value)) {
+            dependArray(value);
+          }
+        }
       }
       return value;
     },
@@ -63,7 +80,7 @@ export function observer(data) {
   }
   // 如果某个对象已经被观测了，就不再重复观测了
   if (data.__ob__) {
-    return;
+    return data.__ob__;
   }
   return new Observer(data);
 }
