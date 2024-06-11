@@ -1,5 +1,6 @@
 import { isObject } from "../utils";
 import { arrayMethods } from "./array";
+import Dep from "./dep";
 
 // 检查数据类型，类有类型 普通对象无类型（Object除外）
 class Observer {
@@ -37,13 +38,20 @@ class Observer {
 function defineReactive(data, key, value) {
   // 递归处理对象
   observer(value);
+  let dep = new Dep();
   Object.defineProperty(data, key, {
     get() {
+      if (Dep.target) {
+        dep.depend();
+      }
       return value;
     },
     set(newV) {
-      observer(newV); // 如果用户赋值一个新对象，需要将这个对象进行劫持
-      value = newV;
+      if (newV !== value) {
+        observer(newV); // 如果用户赋值一个新对象，需要将这个对象进行劫持
+        value = newV;
+        dep.notify();
+      }
     },
   });
 }

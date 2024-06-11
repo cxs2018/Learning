@@ -8,17 +8,23 @@
     <title>Document</title>
 </head>
 <body>
-<div id="app" a="1" style="color:red;background:green">
-    hello {{name}} world
+<div id="app" >
+    hello {{name}} world {{age}} {{name}}
 </div>
 <script src="./dist/vue.js"></script>
 <script>
   let vm = new Vue({
     el: "#app",
     data: {
-      name:{title:"name"},
+      name: "-Vue-",
+      age: "-React-"
     }
   })
+  // 数据变化需要影响视图，视图和数据绑定
+  setTimeout(() => {
+	  vm.name = "Hello"
+    vm.age = "Angular"
+  }, 2000)
 </script>
 </body>
 </html>
