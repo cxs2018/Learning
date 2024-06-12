@@ -8,21 +8,47 @@
     <title>Document</title>
 </head>
 <body>
-<div id="app" >
-    {{obj}}
+<div id="app">
+    {{name}}-{{age}}-{{school}}
 </div>
 <script src="./dist/vue.js"></script>
 <script>
-  let vm = new Vue({
-    el: "#app",
-    data: {
-      obj: {a:{a:1}} // JSON.stringify 会取值，进行依赖收集
-    }
-  })
-  // 数据变化需要影响视图，视图和数据绑定
-  setTimeout(() => {
-		vm.obj.a.a = 2
-  },2000)
+	let vm = new Vue({
+		el: "#app",
+		data: {
+			name: "Hello", // JSON.stringify 会取值，进行依赖收集
+			age: 25,
+			school: {
+				name: "MIT",
+				year: 100
+			}
+		},
+		watch: {
+			name(newValue, oldValue) {
+				console.log("name", newValue, oldValue)
+			},
+			age: [
+				function (newValue, oldValue) {
+					console.log("age1", newValue, oldValue)
+				},
+				function (newValue, oldValue) {
+					console.log("age2", newValue, oldValue)
+				},
+			],
+			"school.name": function (newValue, oldValue) {
+				console.log("school.name", newValue, oldValue)
+			},
+		}
+	})
+	vm.$watch("name", function (newValue, oldValue) {
+		console.log("#watch", newValue, oldValue)
+	})
+	// 数据变化需要影响视图，视图和数据绑定
+	setTimeout(() => {
+		vm.name = "World";
+		vm.age = 28;
+		vm.school.name = "SCU";
+	}, 2000)
 </script>
 </body>
 </html>

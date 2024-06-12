@@ -22,6 +22,6 @@ export function mountComponent(vm, el) {
     () => {
       console.log("更新视图了");
     },
-    true, // 渲染watcher
+    {}, // 渲染watcher
   );
 }
