@@ -8,6 +8,8 @@ class Watcher {
     this.vm = vm;
     this.exprOrFn = exprOrFn;
     this.user = !!options.user;
+    this.lazy = !!options.lazy;
+    this.dirty = !!options.lazy;
     this.cb = cb;
     this.options = options;
     this.id = id++;
@@ -30,12 +32,12 @@ class Watcher {
     this.depsId = new Set();
 
     // oldValue
-    this.value = this.get();
+    this.value = this.lazy ? undefined : this.get();
   }
 
   get() {
     pushTarget(this);
-    const value = this.getter();
+    const value = this.getter.call(this.vm);
     popTarget();
     return value;
   }
@@ -50,7 +52,11 @@ class Watcher {
   }
 
   update() {
-    queueWatcher(this);
+    if (this.lazy) {
+      this.dirty = true;
+    } else {
+      queueWatcher(this);
+    }
   }
 
   run() {
@@ -59,6 +65,18 @@ class Watcher {
     this.value = newValue;
     if (this.user) {
       this.cb.call(this.vm, newValue, oldValue);
+    }
+  }
+
+  evaluate() {
+    this.dirty = false; // 为false表示取过值了
+    this.value = this.get();
+  }
+
+  depend() {
+    let i = this.deps.length;
+    while (i--) {
+      this.deps[i].depend();
     }
   }
 }

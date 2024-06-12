@@ -9,7 +9,7 @@
 </head>
 <body>
 <div id="app">
-    {{name}}-{{age}}-{{school}}
+    {{name}}-{{age}}-{{school}}-{{cxs}}
 </div>
 <script src="./dist/vue.js"></script>
 <script>
@@ -23,31 +23,37 @@
 				year: 100
 			}
 		},
-		watch: {
-			name(newValue, oldValue) {
-				console.log("name", newValue, oldValue)
-			},
-			age: [
-				function (newValue, oldValue) {
-					console.log("age1", newValue, oldValue)
-				},
-				function (newValue, oldValue) {
-					console.log("age2", newValue, oldValue)
-				},
-			],
-			"school.name": function (newValue, oldValue) {
-				console.log("school.name", newValue, oldValue)
-			},
+		computed: {
+			cxs: {
+				get() {
+					return this.name + this.age
+				}
+			}
 		}
+		// watch: {
+		// 	name(newValue, oldValue) {
+		// 		console.log("name", newValue, oldValue)
+		// 	},
+		// 	age: [
+		// 		function (newValue, oldValue) {
+		// 			console.log("age1", newValue, oldValue)
+		// 		},
+		// 		function (newValue, oldValue) {
+		// 			console.log("age2", newValue, oldValue)
+		// 		},
+		// 	],
+		// 	"school.name": function (newValue, oldValue) {
+		// 		console.log("school.name", newValue, oldValue)
+		// 	},
+		// }
 	})
-	vm.$watch("name", function (newValue, oldValue) {
-		console.log("#watch", newValue, oldValue)
-	})
-	// 数据变化需要影响视图，视图和数据绑定
+	// vm.$watch("name", function (newValue, oldValue) {
+	// 	console.log("#watch", newValue, oldValue)
+	// })
+	// // 数据变化需要影响视图，视图和数据绑定
 	setTimeout(() => {
 		vm.name = "World";
 		vm.age = 28;
-		vm.school.name = "SCU";
 	}, 2000)
 </script>
 </body>

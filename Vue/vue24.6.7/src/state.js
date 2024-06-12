@@ -1,6 +1,7 @@
 import { isFunction } from "./utils";
 import { observer } from "./observer/index";
 import Watcher from "./observer/watcher";
+import Dep from "./observer/dep";
 
 export function initState(vm) {
   const options = vm.$options;
@@ -10,9 +11,9 @@ export function initState(vm) {
   if (options.data) {
     initData(vm);
   }
-  // if (options.computed) {
-  //   initComputed();
-  // }
+  if (options.computed) {
+    initComputed(vm, options.computed);
+  }
   // 初始化 watch
   if (options.watch) {
     initWatch(vm, options.watch);
@@ -39,6 +40,40 @@ function initData(vm) {
     proxy(vm, "_data", key);
   }
   observer(data);
+}
+
+function initComputed(vm, computed) {
+  const watchers = (vm._computedWatchers = {});
+  for (const key in computed) {
+    const useDef = computed[key];
+    let getter = typeof useDef === "function" ? useDef : useDef.get;
+    watchers[key] = new Watcher(vm, getter, () => {}, { lazy: true });
+    defineComputed(vm, key, useDef);
+  }
+}
+
+function createComputedGetter(key) {
+  return function computedGetter() {
+    let watcher = this._computedWatchers[key];
+    if (watcher.dirty) {
+      watcher.evaluate();
+    }
+    if (Dep.target) {
+      watcher.depend();
+    }
+    return watcher.value;
+  };
+}
+
+function defineComputed(vm, key, userDef) {
+  let sharedProperty = {};
+  if (typeof userDef === "function") {
+    sharedProperty.get = createComputedGetter(key);
+  } else {
+    sharedProperty.get = createComputedGetter(key);
+    sharedProperty.set = userDef.set || (() => {});
+  }
+  Object.defineProperty(vm, key, sharedProperty);
 }
 
 function initWatch(vm, watch) {
