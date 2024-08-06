@@ -33,6 +33,6 @@ function quickSort(A, p, r) {
 
 const arr = [0, 2, 8, 7, 1, 3, 5, 6, 4, 2, 9, 5, 2];
 
-quickSort(arr, 1, arr.length - 1);
+quickSort(arr, 0, arr.length - 1);
 
 console.log(arr);
