@@ -101,3 +101,44 @@ interface Person {
 type K1 = keyof Person; // "name" | "age" | "location"
 type K2 = keyof Person[]; // number | "length" | "push" | "concat" | ...
 type K3 = keyof { [x: string]: Person }; // string | number
+
+{
+  type Partial<T> = {
+    [P in keyof T]?: T[P];
+  };
+  interface Person {
+    name: string;
+    age: number;
+  }
+  type PartialPerson = Partial<Person>;
+}
+{
+  interface PageInfo {
+    title: string;
+  }
+
+  type Page = "home" | "about" | "contact";
+
+  type a = Record<Page, PageInfo>;
+}
+{
+  interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+  }
+
+  type TodoPreview = Pick<Todo, "title" | "completed">;
+}
+type T0 = Exclude<"a" | "b" | "c", "a">; // "b" | "c"
+type T1 = Exclude<"a" | "b" | "c", "a" | "b">; // "c"
+type T2 = Exclude<string | number | (() => void), Function>; // string | number
+
+type T0 = ReturnType<() => string>; // string
+type T1 = ReturnType<(s: string) => void>; // void
+type T2 = ReturnType<<T>() => T>; // {}
+type T3 = ReturnType<<T extends U, U extends number[]>() => T>; // number[]
+type T4 = ReturnType<any>; // any
+type T5 = ReturnType<never>; // any
+type T6 = ReturnType<string>; // Error
+type T7 = ReturnType<Function>; // Error
