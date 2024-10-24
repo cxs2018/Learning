@@ -142,3 +142,21 @@ type T4 = ReturnType<any>; // any
 type T5 = ReturnType<never>; // any
 type T6 = ReturnType<string>; // Error
 type T7 = ReturnType<Function>; // Error
+
+function padding(all: number);
+function padding(topAndBottom: number, leftAndRight: number);
+function padding(top: number, right: number, bottom: number, left: number);
+function padding(a: number, b?: number, c?: number, d?: any) {
+  if (b === undefined && c === undefined && d === undefined) {
+    b = c = d = a;
+  } else if (c === undefined && d === undefined) {
+    c = a;
+    d = b;
+  }
+  return {
+    top: a,
+    right: b,
+    bottom: c,
+    left: d,
+  };
+}
