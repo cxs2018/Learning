@@ -77,3 +77,198 @@ function search2(nums, target) {
 
   console.log(search([10, 21, 34, 46, 58, 73, 81, 95], 11));
 }
+
+{
+  function search(nums, target) {
+    let left = 0,
+      right = nums.length - 1;
+    while (left <= right) {
+      const middle = left + ((right - left) >> 1);
+      if (nums[middle] > target) {
+        right = middle - 1;
+      } else if (nums[middle] < target) {
+        left = middle + 1;
+      } else {
+        return middle;
+      }
+    }
+    return -1;
+  }
+  console.log("111", search([10, 21, 34, 46, 58, 73, 81, 95], 46));
+}
+
+{
+  function search(nums, target) {
+    let left = 0,
+      right = nums.length - 1;
+    let index = -1;
+    while (left <= right) {
+      const middle = left + ((right - left) >> 1);
+      if (nums[middle] > target) {
+        right = middle - 1;
+      } else if (nums[middle] < target) {
+        left = middle + 1;
+      } else {
+        index = middle;
+        break;
+      }
+    }
+    if (index === -1) {
+      return [-1, -1];
+    } else {
+      let start = index;
+      while (start > -1) {
+        if (nums[start] === target) {
+          start--;
+        } else {
+          break;
+        }
+      }
+      let end = index;
+      while (end <= nums.length - 1) {
+        if (nums[end] === target) {
+          end++;
+        } else {
+          break;
+        }
+      }
+      return [start + 1, end - 1];
+    }
+  }
+  console.log("2222222", search([5, 5, 7, 8, 8, 9], 5));
+}
+{
+  console.log("---------");
+  const arr = [1, 1, 5];
+  function search(nums, target) {
+    function findLeftBorder(nums, target) {
+      let left = 0;
+      let right = nums.length - 1;
+      let leftBorder = -2;
+      while (left <= right) {
+        let middle = left + ((right - left) >> 1);
+        if (nums[middle] < target) {
+          left = middle + 1;
+        } else {
+          right = middle - 1;
+          leftBorder = right;
+        }
+      }
+      return leftBorder;
+    }
+    function findRightBorder(nums, target) {
+      let left = 0;
+      let right = nums.length - 1;
+      let rightBorder = -2;
+      while (left <= right) {
+        let middle = left + Math.floor((right - left) / 2);
+        if (nums[middle] > target) {
+          right = middle - 1;
+        } else {
+          left = middle + 1;
+          rightBorder = left;
+        }
+      }
+      return rightBorder;
+    }
+    const leftBorder = findLeftBorder(nums, target);
+    const rightBorder = findRightBorder(nums, target);
+    console.log(leftBorder, rightBorder);
+    if (leftBorder === -2 || rightBorder === -2) {
+      return [-1, -1];
+    }
+    if (rightBorder - leftBorder > 1) {
+      return [leftBorder + 1, rightBorder - 1];
+    }
+    return [-1, -1];
+  }
+  console.log(search(arr, 5));
+}
+
+{
+  function search(nums, target) {
+    let left = 0;
+    let right = nums.length - 1;
+    let leftBorder = -1;
+    let rightBorder = -1;
+    while (left <= right) {
+      let middle = left + ((right - left) >> 1);
+      if (nums[middle] === target) {
+        leftBorder = middle;
+        right = middle - 1;
+      } else if (nums[middle] > target) {
+        right = middle - 1;
+      } else {
+        left = middle + 1;
+      }
+    }
+    left = 0;
+    right = nums.length - 1;
+    while (left <= right) {
+      let middle = left + ((right - left) >> 1);
+      if (nums[middle] === target) {
+        rightBorder = middle;
+        left = middle + 1;
+      } else if (nums[middle] > target) {
+        right = middle - 1;
+      } else {
+        left = middle + 1;
+      }
+    }
+    return [leftBorder, rightBorder];
+  }
+}
+
+{
+  /**
+   * @param {number} x
+   * @return {number}
+   */
+  var mySqrt = function (x) {
+    let left = 0;
+    let right = x;
+    let leftBorder = 0;
+    while (left <= right) {
+      let middle = left + ((right - left) >> 1);
+      if (middle * middle > x) {
+        right = right - 1;
+      } else {
+        leftBorder = middle;
+        left = left + 1;
+      }
+    }
+    if (leftBorder * leftBorder === x) {
+      return leftBorder;
+    } else {
+      return leftBorder - 1;
+    }
+  };
+  // console.log("mySqrt", mySqrt(2147395599));
+}
+
+{
+  console.log(Math.exp(0.5 * Math.log(80)));
+}
+
+{
+  /**
+   * @param {number} num
+   * @return {boolean}
+   */
+  var isPerfectSquare = function (num) {
+    let left = 0;
+    let right = num;
+    while (left <= right) {
+      const middle = left + ((right - left) >> 1);
+      const sqrt = middle * middle;
+      if (sqrt === num) {
+        return true;
+      } else if (sqrt > num) {
+        right = middle - 1;
+      } else {
+        left = middle + 1;
+      }
+    }
+    return false;
+  };
+}
