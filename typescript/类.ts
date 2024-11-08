@@ -148,3 +148,48 @@ namespace c {
   type User = typeof user;
   const res = pick<User, keyof User>(user, ["id", "name"]);
 }
+namespace d {
+  type ObjectDescriptor<D, M> = {
+    data?: D;
+    methods?: M & ThisType<D & M>;
+  };
+  function makeObject<D, M>(desc: ObjectDescriptor<D, M>): D & M {
+    let data: object = desc.data || {};
+    let methods: object = desc.methods || {};
+    return { ...data, ...methods } as D & M;
+  }
+  let obj = makeObject({
+    data: { x: 0, y: 0 },
+    methods: {
+      moveBy(dx: number, dy: number) {
+        this.x += dx;
+        this.y += dy;
+      },
+    },
+  });
+  obj.x = 10;
+  obj.y = 20;
+  obj.moveBy(5, 5);
+  type Constructor<T = {}> = new (...args: any[]) => T;
+  function Timestamped<TBase extends Constructor>(Base: TBase) {
+    return class extends Base {
+      timestamp = Date.now();
+    };
+  }
+  function Activatable<TBase extends Constructor>(Base: TBase) {
+    return class extends Base {
+      isActivated = false;
+      activate() {
+        this.isActivated = true;
+      }
+      deactivate() {
+        this.isActivated = false;
+      }
+    };
+  }
+  class User {
+    name = "";
+  }
+  const TimestampUser = Timestamped(User);
+  const TimestamapActivatableUser = Timestamped(Activatable(User));
+}
