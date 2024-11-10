@@ -81,3 +81,82 @@ namespace c {
   let ParentToChild: ParentToChild;
   exec(ParentToChild);
 }
+namespace c {
+  // 类型保护
+  interface Bird {
+    name: string;
+  }
+  interface Person {
+    age: number;
+  }
+  type BirdPerson = Bird | Person;
+  type MyPartial<T> = {
+    [key in keyof T]?: T[key];
+  };
+  // 条件分发
+  type Diff<T, U> = T extends U ? never : T;
+  type Filter<T, U> = T extends U ? T : never;
+  type a = Filter<"a" | "b", "a" | "b" | "c">;
+}
+namespace d {
+  type Exclude<T, U> = T extends U ? never : T;
+  type Extract<T, U> = T extends U ? T : never;
+  type NonNullable<T> = T extends null | undefined ? never : T;
+  type ReturnType<T> = T extends (...args: any[]) => infer R ? R : T;
+  type Parameters<T> = T extends (...args: infer P) => any ? P : never;
+  type ConstructorParameters<T> = T extends new (...args: infer P) => any
+    ? P
+    : never;
+  type InstanceType<T> = T extends new (...args: any[]) => infer R ? R : any;
+  type ElementOf<T> = T extends Array<infer E> ? E : never;
+  type Ttuple = [string, number, boolean];
+  type TupleToUnion = ElementOf<Ttuple>;
+  type T1 = { name: string };
+  type T2 = { age: number };
+  type ToIntersection<T> = T extends {
+    a: (x: infer U) => void;
+    b: (x: infer U) => void;
+  }
+    ? U
+    : never;
+  type T3 = ToIntersection<{ a: (x: T1) => void; b: (x: T2) => void }>;
+  let t3: T3 = {
+    name: "1",
+    age: 10,
+  };
+  // ts 函数是双向协变的，协变传子类，逆变传父类，协变更严谨，逆变更宽松
+  type DeepPartial<T> = {
+    [U in keyof T]?: T[U] extends object ? DeepPartial<T[U]> : T[U];
+  };
+  type Pick<T, K extends keyof T> = {
+    [p in K]: T[p];
+  };
+  /**
+   * Construct a type with a set of properties K of type T
+   */
+  type Record<K extends keyof any, T> = {
+    [P in K]: T;
+  };
+  function mapObject<K extends string | number, T, U>(
+    obj: Record<K, T>,
+    map: (x: T) => U,
+  ): Record<K, U> {
+    let result: Record<K, U> = <Record<K, U>>{};
+    for (const objKey in obj) {
+      result[objKey] = map(obj[objKey]);
+    }
+    return result;
+  }
+  let names = { 0: "hello", 1: "world" };
+  let lengths = mapObject<string | number, string, number>(
+    names,
+    (s: string) => s.length,
+  );
+  console.log(lengths);
+  type Point = "x" | "y";
+  type PointList = Record<Point, { value: number }>;
+  const cars: PointList = {
+    x: { value: 10 },
+    y: { value: 20 },
+  };
+}
