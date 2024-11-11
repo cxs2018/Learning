@@ -160,3 +160,37 @@ namespace d {
     y: { value: 20 },
   };
 }
+namespace e {
+  // 条件类型 在定义泛型的时候能够添加进逻辑分支，以后泛型更加灵活
+  // 1. 定义条件类型
+  interface Fish {
+    name: string;
+  }
+  interface Water {
+    name: string;
+  }
+  interface Bird {
+    name: string;
+  }
+  interface Sky {
+    name: string;
+  }
+  type Condition<T> = T extends Fish ? Water : Sky;
+  let condition: Condition<Fish> = { name: "水" };
+  // 2. 条件类型的分发 分布式有条件类型 naked type parameter
+  type a = string | number | boolean;
+  type b = number;
+  // 联合类型，少的是子类型，多的是父类型，子类型范围更窄
+  type c = b extends a ? true : false;
+  let d: c = true;
+  type e = {
+    name: string;
+  };
+  type f = {
+    name: string;
+    age: number;
+  };
+  // 对象属性越多，是子类型，相当于范围越窄
+  type g = e extends f ? true : false;
+  let i: g = true;
+}
