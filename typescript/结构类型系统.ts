@@ -193,4 +193,58 @@ namespace e {
   // 对象属性越多，是子类型，相当于范围越窄
   type g = e extends f ? true : false;
   let i: g = true;
+  type Ta = string | number;
+  type Tb = number | boolean;
+  type Tc = Ta & Tb;
+  function pick<T, K extends keyof T>(o: T, names: K[]): T[K][] {
+    return names.map((n) => o[n]);
+  }
+  let user = { id: 1, name: "zhufeng" };
+  type User = typeof user;
+  const res = pick<User, keyof User>(user, ["id", "name"]);
+  console.log(res);
+}
+namespace f {
+  interface Animal {
+    name: string;
+    age: number;
+  }
+
+  interface Person {
+    name: string;
+    age: number;
+    gender: number;
+  }
+  // 要判断目标类型`Person`是否能够兼容输入的源类型`Animal`
+  function getName(animal: Animal): string {
+    return animal.name;
+  }
+
+  let p = {
+    name: "zhufeng",
+    age: 10,
+    gender: 0,
+  };
+
+  getName(p);
+  //只有在传参的时候两个变量之间才会进行兼容性的比较，赋值的时候并不会比较,会直接报错
+  let a: Animal = {
+    name: "zhufeng",
+    age: 10,
+    gender: 0,
+  };
+  //接口内容为空没用到泛型的时候是可以的
+  //1.接口内容为空没用到泛型的时候是可以的
+  interface Empty<T> {}
+  let x!: Empty<string>;
+  let y!: Empty<number>;
+  x = y;
+
+  //2.接口内容不为空的时候不可以
+  interface NotEmpty<T> {
+    data: T;
+  }
+  let x1!: NotEmpty<string>;
+  let y1!: NotEmpty<number>;
+  x1 = y1;
 }
