@@ -1,0 +1,42 @@
+{
+  "name": "todolist",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "SET NODE_OPTIONS=--openssl-legacy-provider && webpack",
+    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/react": "16.9.48",
+    "@types/react-dom": "16.9.8",
+    "@types/react-redux": "7.1.9",
+    "@types/react-router-dom": "5.1.5",
+    "@types/react-swipe": "6.0.0",
+    "@types/react-transition-group": "4.4.0",
+    "@types/redux-logger": "3.0.8",
+    "connected-react-router": "6.8.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-redux": "7.2.1",
+    "react-router-dom": "5.2.0",
+    "react-swipe": "6.0.4",
+    "react-transition-group": "4.4.1",
+    "redux": "4.0.5",
+    "redux-thunk": "2.4.0",
+    "redux-logger": "4.0.0"
+  },
+  "devDependencies": {
+    "webpack": "4.44.1",
+    "webpack-cli": "3.3.12",
+    "webpack-dev-server": "3.11.0",
+    "html-webpack-plugin": "4.5.2",
+    "hoist-non-react-statics": "3.3.2",
+    "typescript": "5.6.3",
+    "ts-loader": "7.0.5",
+    "source-map-loader": "1.1.0"
+  }
+}
