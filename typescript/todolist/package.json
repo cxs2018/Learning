@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "build": "SET NODE_OPTIONS=--openssl-legacy-provider && webpack",
-    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server"
+    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server",
+    "buildMac": "export NODE_OPTIONS=--openssl-legacy-provider && webpack",
+    "startMac": "export NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server"
   },
   "keywords": [],
   "author": "",
