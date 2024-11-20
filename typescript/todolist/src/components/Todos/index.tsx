@@ -2,30 +2,31 @@ import * as React from "react";
 import { Todo } from "@/models";
 import TodoInput from "@/components/Todos/TodoInput";
 import TodoItem from "@/components/Todos/TodoItem";
+import { connect } from "react-redux";
+import { CombinedState, TodosState } from "@/store/reducers";
+import * as actions from "@/actions/todos";
+import { RouteComponentProps } from "react-router-dom";
+import { StaticContext } from "react-router";
 
-interface Props {}
+interface Params {}
 
-interface State {
-  todos: Array<Todo>;
+export interface TodosLocationState {
+  name: string;
 }
 
-export default class Todos extends React.Component<Props, State> {
-  state = {
-    todos: [] as Todo[],
-  };
+type Props = TodosState &
+  typeof actions &
+  RouteComponentProps<Params, StaticContext, TodosLocationState>;
 
-  addTodo = (todo: Todo) => {
-    this.setState({
-      todos: [...this.state.todos, todo] as Todo[],
-    });
-  };
-
+class Todos extends React.Component<Props, any> {
   render() {
+    const { addTodo, list, location } = this.props;
     return (
       <div>
-        <TodoInput addTodo={this.addTodo} />
+        <p>name: {location.state.name}</p>
+        <TodoInput addTodo={addTodo} />
         <ul>
-          {this.state.todos.map((todo: Todo) => {
+          {list.map((todo: Todo) => {
             return <TodoItem todo={todo} key={todo.id} />;
           })}
         </ul>
@@ -33,3 +34,7 @@ export default class Todos extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = (state: CombinedState): TodosState => state.todos;
+
+export default connect(mapStateToProps, actions)(Todos);

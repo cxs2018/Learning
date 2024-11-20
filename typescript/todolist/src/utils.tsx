@@ -1,6 +1,19 @@
 import * as React from "react";
 import * as hoistNonReactStatics from "hoist-non-react-statics";
 
+// function myHoistNonReactStatics<
+//   N extends React.ComponentType<any>,
+//   O extends React.ComponentType<any>,
+// >(NewComponent: N, OldComponent: O): N & O {
+//   let keys = Object.getOwnPropertyNames(OldComponent);
+//   for (let i = 0; i < keys.length; i++) {
+//     const key = keys[i];
+//     const descriptor = Object.getOwnPropertyDescriptor(OldComponent, key);
+//     Object.defineProperty(NewComponent, key, descriptor);
+//   }
+//   return NewComponent as N & O;
+// }
+
 let defaultProps = {
   settings: {
     maxLength: 6,
@@ -20,5 +33,6 @@ export const withDefaultProps = <P extends DefaultProps>(
       return <OldComponent {...props} />;
     }
   }
-  return NewComponent;
+  // 提升 OldComponent 非 React 官方的静态属性到 NewComponent
+  return hoistNonReactStatics(NewComponent, OldComponent);
 };
