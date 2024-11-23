@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as hoistNonReactStatics from "hoist-non-react-statics";
+import hoistNonReactStatics from "hoist-non-react-statics";
 
 // function myHoistNonReactStatics<
 //   N extends React.ComponentType<any>,

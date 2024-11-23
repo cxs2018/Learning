@@ -31,3 +31,26 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("root"),
 );
+
+import axios, { AxiosResponse } from "./axios";
+const baseUrl = "http://localhost:8080";
+interface User {
+  name: string;
+  password: string;
+}
+let user: User = {
+  name: "zhufeng",
+  password: "123456",
+};
+axios({
+  method: "get",
+  url: baseUrl + "/get",
+  params: user,
+})
+  .then((response: AxiosResponse) => {
+    console.log(response);
+    return response.data;
+  })
+  .catch((err: any) => {
+    console.log(err);
+  });

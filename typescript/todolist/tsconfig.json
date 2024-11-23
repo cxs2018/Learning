@@ -3,6 +3,7 @@
     "outDir": "./dist",
     "sourceMap": true,
     "strict": true,
+    "esModuleInterop": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "module": "commonjs",
@@ -16,6 +17,7 @@
     }
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "typings"
   ]
 }
