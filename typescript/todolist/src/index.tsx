@@ -32,7 +32,7 @@ ReactDOM.render(
   document.getElementById("root"),
 );
 
-import axios, { AxiosResponse } from "./axios";
+import axios, { AxiosResponse, AxiosRequestConfig } from "./axios";
 const baseUrl = "http://localhost:8080";
 interface User {
   name: string;
@@ -40,17 +40,65 @@ interface User {
 }
 let user: User = {
   name: "zhufeng",
-  password: "123456",
+  password: "16",
 };
+
+console.time("cost");
+axios.interceptors.request.use((config: AxiosRequestConfig) => {
+  config.headers && (config.headers.name += "1");
+  return config;
+});
+let request = axios.interceptors.request.use((config: AxiosRequestConfig) => {
+  config.headers && (config.headers.name += "2");
+  return config;
+});
+axios.interceptors.request.use((config: AxiosRequestConfig) => {
+  config.headers && (config.headers.name += "3");
+  return config;
+});
+axios.interceptors.request.use(
+  (
+    config: AxiosRequestConfig,
+  ): AxiosRequestConfig | Promise<AxiosRequestConfig> => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        config.headers && (config.headers.name += "4");
+        console.timeEnd("cost");
+        resolve(config);
+      }, 3000);
+    });
+  },
+);
+axios.interceptors.request.eject(request);
+let response = axios.interceptors.response.use(
+  (response: AxiosResponse<User>) => {
+    response.data.name += "1";
+    return response;
+  },
+);
+axios.interceptors.response.use((response: AxiosResponse<User>) => {
+  response.data.name += "2";
+  return response;
+});
+axios.interceptors.response.use((response: AxiosResponse<User>) => {
+  response.data.name += "3";
+  return response;
+});
+axios.interceptors.response.eject(response);
+
 axios({
-  method: "get",
-  url: baseUrl + "/get",
-  params: user,
+  method: "post",
+  url: baseUrl + "/post",
+  headers: {
+    "content-type": "application/json",
+    name: "cxs",
+  },
+  data: user,
 })
-  .then((response: AxiosResponse) => {
+  .then((response: AxiosResponse<User>) => {
     console.log(response);
     return response.data;
   })
   .catch((err: any) => {
-    console.log(err);
+    console.log("err: ", err);
   });
