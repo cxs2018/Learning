@@ -90,7 +90,7 @@ const source = CancelToken.source();
 
 axios({
   method: "post",
-  url: baseUrl + "/post",
+  url: baseUrl + "/post_status?code=400",
   headers: {
     "content-type": "application/json",
     name: "cxs",
@@ -103,6 +103,10 @@ axios({
     return response.data;
   })
   .catch((err: any) => {
-    console.log("err: ", err);
+    if (axios.isCancel(err)) {
+      console.log("请求取消", err);
+    } else {
+      console.log("error", err);
+    }
   });
 // source.cancel("用户取消了请求");

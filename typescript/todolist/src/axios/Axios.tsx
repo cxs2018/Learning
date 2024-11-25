@@ -138,7 +138,7 @@ export default class Axios {
         };
       }
       if (config.cancelToken) {
-        config.cancelToken.then((message: string) => {
+        config.cancelToken.then((message: any) => {
           request.abort();
           reject(message);
         });
