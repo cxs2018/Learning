@@ -19,6 +19,7 @@ app.get("/get", function (req, res) {
   res.json(req.query);
 });
 app.post("/post", function (req, res) {
+  console.log("/post", req.body);
   res.json(req.body);
 });
 app.post("/post_timeout", function (req, res) {

@@ -5,6 +5,11 @@ import AxiosInterceptorsManager, {
   Interceptor,
 } from "./AxiosInterceptorsManager";
 
+interface Interceptors {
+  request: AxiosInterceptorsManager<AxiosRequestConfig>;
+  response: AxiosInterceptorsManager<AxiosResponse>;
+}
+
 let defaults: AxiosRequestConfig = {
   method: "get",
   timeout: 0,
@@ -33,13 +38,13 @@ postStyleMethods.forEach((method: string) => {
 });
 let allMethods = [...getStyleMethods, ...postStyleMethods];
 
-export default class Axios<T> {
+export default class Axios {
   public defaults: AxiosRequestConfig = defaults;
-  public interceptors = {
+  public interceptors: Interceptors = {
     request: new AxiosInterceptorsManager<AxiosRequestConfig>(),
-    response: new AxiosInterceptorsManager<AxiosResponse<T>>(),
+    response: new AxiosInterceptorsManager<AxiosResponse>(),
   };
-  request(
+  request<T>(
     config: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig | AxiosResponse<T>> {
     if (this.defaults.headers && config.headers) {
@@ -48,7 +53,7 @@ export default class Axios<T> {
     if (config.transformRequest && config.data) {
       config.data = config.transformRequest(config.data, config.headers);
     }
-    const chain: Array<any> = [
+    const chain: Interceptor[] = [
       {
         onFulfilled: this.dispatchRequest,
         onRejected: (error: any) => error,
@@ -67,7 +72,7 @@ export default class Axios<T> {
     let promise: Promise<AxiosRequestConfig | AxiosResponse<T>> =
       Promise.resolve(config);
     while (chain.length) {
-      const { onFulfilled, onRejected } = chain.shift();
+      const { onFulfilled, onRejected } = chain.shift()!;
       promise = promise.then(onFulfilled, onRejected);
     }
     return promise;
@@ -97,6 +102,7 @@ export default class Axios<T> {
             if (config.transformResponse) {
               response = config.transformResponse(response);
             }
+            console.log("response.data", response.data);
             resolve(response);
           } else {
             reject("请求失败");
@@ -105,13 +111,13 @@ export default class Axios<T> {
       };
       if (headers) {
         for (const key in headers) {
-          if (
-            key === "common" ||
-            allMethods.includes(key) ||
-            key === config.method
-          ) {
-            for (const key2 in headers[key]) {
-              request.setRequestHeader(key2, headers[key][key2]);
+          if (key === "common" || allMethods.includes(key)) {
+            if (key === config.method) {
+              for (const key2 in headers[key]) {
+                if (!(key2 in headers)) {
+                  request.setRequestHeader(key2, headers[key][key2]);
+                }
+              }
             }
           } else {
             request.setRequestHeader(key, headers[key]);

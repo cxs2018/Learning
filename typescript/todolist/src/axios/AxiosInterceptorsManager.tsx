@@ -6,7 +6,7 @@ interface OnRejected {
   (error: any): any;
 }
 
-export interface Interceptor<V> {
+export interface Interceptor<V = any> {
   onFulfilled: OnFulfilled<V>;
   onRejected?: OnRejected;
 }

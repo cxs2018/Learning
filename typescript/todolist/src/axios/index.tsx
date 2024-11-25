@@ -4,10 +4,10 @@ import { CancelToken, isCancel } from "./cancel";
 
 // 可以创建一个 axios 的实例，它其实就是一个函数
 function createInstance(): AxiosInstance {
-  let context: Axios<AxiosResponse> = new Axios();
-  let instance: AxiosInstance = Axios.prototype.request.bind(context) as any;
-  Object.assign(instance, Axios.prototype, context);
-  return instance;
+  let context = new Axios();
+  let instance = Axios.prototype.request.bind(context);
+  instance = Object.assign(instance, Axios.prototype, context);
+  return instance as AxiosInstance;
 }
 
 let axios = createInstance();
