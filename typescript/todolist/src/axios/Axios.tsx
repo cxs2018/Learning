@@ -13,6 +13,13 @@ let defaults: AxiosRequestConfig = {
       accept: "application/json",
     },
   },
+  transformRequest: (data: any, headers: any) => {
+    headers["common"]["content-type"] = "application/json";
+    return JSON.stringify(data);
+  },
+  transformResponse: (response: any) => {
+    return response.data;
+  },
 };
 let getStyleMethods = ["get", "head", "delete", "options"];
 getStyleMethods.forEach((method: string) => {
@@ -35,7 +42,12 @@ export default class Axios<T> {
   request(
     config: AxiosRequestConfig,
   ): Promise<AxiosRequestConfig | AxiosResponse<T>> {
-    config.headers = Object.assign(this.defaults.headers, config.headers);
+    if (this.defaults.headers && config.headers) {
+      config.headers = Object.assign(this.defaults.headers, config.headers);
+    }
+    if (config.transformRequest && config.data) {
+      config.data = config.transformRequest(config.data, config.headers);
+    }
     const chain: Array<any> = [
       {
         onFulfilled: this.dispatchRequest,
@@ -82,6 +94,9 @@ export default class Axios<T> {
               config,
               request,
             };
+            if (config.transformResponse) {
+              response = config.transformResponse(response);
+            }
             resolve(response);
           } else {
             reject("请求失败");
@@ -90,8 +105,11 @@ export default class Axios<T> {
       };
       if (headers) {
         for (const key in headers) {
-          // request.setRequestHeader(key, headers[key]);
-          if (key === "common" || key === config.method) {
+          if (
+            key === "common" ||
+            allMethods.includes(key) ||
+            key === config.method
+          ) {
             for (const key2 in headers[key]) {
               request.setRequestHeader(key2, headers[key][key2]);
             }
@@ -112,6 +130,12 @@ export default class Axios<T> {
         request.ontimeout = function () {
           reject("超时了");
         };
+      }
+      if (config.cancelToken) {
+        config.cancelToken.then((message: string) => {
+          request.abort();
+          reject(message);
+        });
       }
       request.send(body);
     });

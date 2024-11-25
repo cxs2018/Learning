@@ -56,19 +56,19 @@ axios.interceptors.request.use((config: AxiosRequestConfig) => {
   config.headers && (config.headers.name += "3");
   return config;
 });
-axios.interceptors.request.use(
-  (
-    config: AxiosRequestConfig,
-  ): AxiosRequestConfig | Promise<AxiosRequestConfig> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        config.headers && (config.headers.name += "4");
-        console.timeEnd("cost");
-        resolve(config);
-      }, 3000);
-    });
-  },
-);
+// axios.interceptors.request.use(
+//   (
+//     config: AxiosRequestConfig,
+//   ): AxiosRequestConfig | Promise<AxiosRequestConfig> => {
+//     return new Promise((resolve, reject) => {
+//       setTimeout(() => {
+//         config.headers && (config.headers.name += "4");
+//         console.timeEnd("cost");
+//         resolve(config);
+//       }, 3000);
+//     });
+//   },
+// );
 axios.interceptors.request.eject(request);
 let response = axios.interceptors.response.use(
   (response: AxiosResponse<User>) => {
@@ -85,6 +85,8 @@ axios.interceptors.response.use((response: AxiosResponse<User>) => {
   return response;
 });
 axios.interceptors.response.eject(response);
+const CancelToken = axios.cancelToken;
+const source = CancelToken.source();
 
 axios({
   method: "post",
@@ -93,6 +95,7 @@ axios({
     "content-type": "application/json",
     name: "cxs",
   },
+  cancelToken: source.token,
   data: user,
 })
   .then((response: AxiosResponse<User>) => {
@@ -102,3 +105,4 @@ axios({
   .catch((err: any) => {
     console.log("err: ", err);
   });
+// source.cancel("用户取消了请求");
