@@ -3,10 +3,14 @@
     "outDir": "./dist",
     "sourceMap": true,
     "noImplicitAny": true,
-    "module": "ESNext",
+    "module": "commonjs",
     "target": "es5",
     "jsx": "react",
-    "esModuleInterop":true
+    "esModuleInterop":true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": [
     "./src/**/*"
