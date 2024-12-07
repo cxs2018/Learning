@@ -1,6 +1,5 @@
 import { AnyAction } from "redux";
-
-export interface HomeState {}
+import { HomeState } from "@/typings/state";
 
 let initialState: HomeState = {};
 

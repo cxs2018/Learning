@@ -1,6 +1,5 @@
 import { AnyAction } from "redux";
-
-export interface ProfileState {}
+import { ProfileState } from "@/typings/state";
 
 let initialState: ProfileState = {};
 

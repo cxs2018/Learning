@@ -1,16 +1,11 @@
 import { AnyAction, combineReducers, Reducer, ReducersMapObject } from "redux";
 import { connectRouter, RouterState } from "connected-react-router";
-import home, { HomeState } from "./home";
-import mine, { MineState } from "./mine";
-import profile, { ProfileState } from "./profile";
+import home from "./home";
+import mine from "./mine";
+import profile from "./profile";
 import history from "@/history";
 
-interface CombinedState {
-  home: HomeState;
-  mine: MineState;
-  profile: ProfileState;
-  router: RouterState;
-}
+import { CombinedState } from "@/typings/state";
 
 let reducers: ReducersMapObject<CombinedState, AnyAction> = {
   home,
