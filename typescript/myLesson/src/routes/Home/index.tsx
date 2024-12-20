@@ -1,10 +1,16 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import "./index.less";
 import HomeHeader from "./components/HomeHeader";
 import { CombinedState, HomeState } from "@/typings/state";
 import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import mapDispatchToProps from "@/store/actions/home";
 
-interface Props {}
+type Props = PropsWithChildren<
+  RouteComponentProps &
+    ReturnType<typeof mapStateToProps> &
+    typeof mapDispatchToProps
+>;
 
 function Home(props: Props) {
   return <HomeHeader />;
@@ -12,4 +18,4 @@ function Home(props: Props) {
 
 const mapStateToProps = (state: CombinedState): HomeState => state.home;
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
