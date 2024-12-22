@@ -25,3 +25,5 @@ webpackAndCompile webpack、编译原理相关
 design-patterns 设计模式相关
 
 React React相关
+
+淘宝镜像源 registry https://registry.npmmirror.com
